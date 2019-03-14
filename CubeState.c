@@ -25,6 +25,7 @@ void putEdgeInPosition(CUBEIN, int i, int j, int k);
 int whiteCrossOrientationCheck(CUBEIN, int i, int j, int k);
 
 void printCube(Cubelet p[3][3][3], Cubelet f[12][9], int which);
+void fixInverse();
 
 void front(Cubelet p[3][3][3], Cubelet f[12][9]);
 void back(Cubelet p[3][3][3], Cubelet f[12][9]);
@@ -84,6 +85,7 @@ int main(int argc, char* argv[]) {
 		int i;
 		srand(time(NULL));
 		for (i=0;i<20;i++) {
+		//sleep(1);
 		int r = rand() % 12;
  		switch (r) {
 			case  0:
@@ -132,11 +134,26 @@ int main(int argc, char* argv[]) {
 		printCube(CUBE, 1);
 		whiteCross(CUBE);
 		printCube(CUBE, 1);
+		fixInverse();
 		printf("%s\n", solution);
 	}
 	return 0;
 }
-
+void fixInverse() {
+	int i;
+	int cnt = 0;
+	Cubelet lastC = N;
+	for(i=0; i<solutionLen-2; i++) {
+		if (solution[i] == solution[i+1] && solution[i] == solution[i+2]) {
+			solution[i+1] = 'i';
+			int j;
+			for (j=i+2; j<solutionLen; j++) {
+				solution[j] = solution[j+1];
+			}
+			solutionLen--;
+		}
+	}
+}
 void whiteCross(Cubelet p[3][3][3], Cubelet f[12][9]) {
 	int i, j, k;
 	//WR
@@ -236,11 +253,15 @@ void moveEdgeToBottom(CUBEIN, int i, int j, int k) {
 			back(p, f);
 		}
 		else if (j == 1) {
-			if (k == 0) {
+			if (k == 0) { //TODO: what about the order of the solution makes it so that only the last one (back/blue) is removed from its place?
 				back(p, f);
+				down(p, f);
+				backInverse(p, f);
 			}
 			else {
 				backInverse(p, f);
+				down(p, f);
+				back(p, f);
 			}
 		}
 	}
@@ -316,8 +337,8 @@ void printCube(Cubelet p[3][3][3], Cubelet f[12][9], int which) { //TODO print p
 }
 
 void front(Cubelet p[3][3][3], Cubelet f[12][9]) {
-	strcat(solution, "F ");
-	solutionLen+=2;
+	strcat(solution, "F");
+	solutionLen++;
 	
 	Cubelet tmp;
 	tmp = p[2][0][0]; p[2][0][0] = p[2][2][0]; p[2][2][0] = p[2][2][2]; p[2][2][2] = p[2][0][2]; p[2][0][2] = tmp; //Front Position Corner Moves
@@ -329,8 +350,8 @@ void front(Cubelet p[3][3][3], Cubelet f[12][9]) {
 	tmp = f[2][5]; f[2][5] = f[3][2]; f[3][2] = f[6][3]; f[6][3] = f[5][6]; f[5][6] = tmp; //Front Edge Corners Part 2 TODO 
 }
 void back(Cubelet p[3][3][3], Cubelet f[12][9]) {
-	strcat(solution, "B ");
-	solutionLen+=2;
+	strcat(solution, "B");
+	solutionLen++;
 
 	Cubelet tmp;
 	tmp = p[0][0][0]; p[0][0][0] = p[0][0][2]; p[0][0][2] = p[0][2][2]; p[0][2][2] = p[0][2][0]; p[0][2][0] = tmp; //Back Position Corner Moves
@@ -342,8 +363,8 @@ void back(Cubelet p[3][3][3], Cubelet f[12][9]) {
 	tmp = f[8][3]; f[8][3] = f[3][0]; f[3][0] = f[0][5]; f[0][5] = f[5][8]; f[5][8] = tmp; //Back Edge Corners Part 2 TODO
 }
 void down(Cubelet p[3][3][3], Cubelet f[12][9]) {
-	strcat(solution, "D ");
-	solutionLen+=2;
+	strcat(solution, "D");
+	solutionLen++;
 	
 	Cubelet tmp;
 	tmp = p[0][2][0]; p[0][2][0] = p[0][2][2]; p[0][2][2] = p[2][2][2]; p[2][2][2] = p[2][2][0]; p[2][2][0] = tmp; //Down Position Corner Moves
@@ -355,8 +376,8 @@ void down(Cubelet p[3][3][3], Cubelet f[12][9]) {
 	tmp = f[5][6]; f[5][6] = f[5][3]; f[5][3] = f[5][0]; f[5][0] = f[9][5]; f[9][5] = tmp; //Down Edge Corners Part 2 TODO
 }
 void up(Cubelet p[3][3][3], Cubelet f[12][9]) {
-	strcat(solution, "U ");
-	solutionLen+=2;
+	strcat(solution, "U");
+	solutionLen++;
 	
 	Cubelet tmp;
 	tmp = p[0][0][0]; p[0][0][0] = p[2][0][0]; p[2][0][0] = p[2][0][2]; p[2][0][2] = p[0][0][2]; p[0][0][2] = tmp; //Up Position Corner Moves
@@ -368,8 +389,8 @@ void up(Cubelet p[3][3][3], Cubelet f[12][9]) {
 	tmp = f[3][2]; f[3][2] = f[3][5]; f[3][5] = f[3][8]; f[3][8] = f[11][3]; f[11][3] = tmp; //Up Edge Corners Part 2 TODO: Name this better (and the simmilar ones also)
 }
 void right(Cubelet p[3][3][3], Cubelet f[12][9]) {
-	strcat(solution, "R ");
-	solutionLen+=2;
+	strcat(solution, "R");
+	solutionLen++;
 	
 	Cubelet tmp;
 	tmp = p[0][0][2]; p[0][0][2] = p[2][0][2]; p[2][0][2] = p[2][2][2]; p[2][2][2] = p[0][2][2]; p[0][2][2] = tmp; //Right Position Corner Moves
@@ -381,8 +402,8 @@ void right(Cubelet p[3][3][3], Cubelet f[12][9]) {
 	tmp = f[2][5]; f[2][5] = f[5][5]; f[5][5] = f[8][5]; f[8][5] = f[11][5]; f[11][5] = tmp; //Right Edge Corners Part 2 TODO
 }
 void left(Cubelet p[3][3][3], Cubelet f[12][9]) {
-	strcat(solution, "L ");
-	solutionLen+=2;
+	strcat(solution, "L");
+	solutionLen++;
 	
 	Cubelet tmp;
 	tmp = p[0][0][0]; p[0][0][0] = p[0][2][0]; p[0][2][0] = p[2][2][0]; p[2][2][0] = p[2][0][0]; p[2][0][0] = tmp; //Left Position Moves
@@ -394,38 +415,38 @@ void left(Cubelet p[3][3][3], Cubelet f[12][9]) {
 	tmp = f[11][3]; f[11][3] = f[8][3]; f[8][3] = f[5][3]; f[5][3] = f[2][3];  f[2][3] = tmp; //Left Edge Corners Part 2 TODO
 }
 void frontInverse(Cubelet p[3][3][3], Cubelet f[12][9]) {
-	strcat(solution, "iF ");
-	solutionLen+=3;
+	//strcat(solution, "iF ");
+	//solutionLen+=3;
 	
 	front(p,f); front(p,f); front(p,f);
 }
 void backInverse(Cubelet p[3][3][3], Cubelet f[12][9]) {
-	strcat(solution, "iB ");
-	solutionLen+=3;
+	//strcat(solution, "iB ");
+	//solutionLen+=3;
 	
 	back(p,f); back(p,f); back(p,f);
 }
 void downInverse(Cubelet p[3][3][3], Cubelet f[12][9]) {
-	strcat(solution, "iD ");
-	solutionLen+=3;
+	//strcat(solution, "iD ");
+	//solutionLen+=3;
 	
 	down(p,f); down(p,f); down(p,f); 
 }
 void upInverse(Cubelet p[3][3][3], Cubelet f[12][9]) {
-	strcat(solution, "iU ");
-	solutionLen+=3;
+	//strcat(solution, "iU ");
+	//solutionLen+=3;
 	
 	up(p,f); up(p,f); up(p,f);	
 }
 void rightInverse(Cubelet p[3][3][3], Cubelet f[12][9]) {
-	strcat(solution, "iR ");
-	solutionLen+=3;
+	//strcat(solution, "iR ");
+	//solutionLen+=3;
 	
 	right(p,f); right(p,f); right(p,f);
 }
 void leftInverse(Cubelet p[3][3][3], Cubelet f[12][9]) {
-	strcat(solution, "iL ");
-	solutionLen+=3;
+	//strcat(solution, "iL ");
+	//solutionLen+=3;
 	
 	left(p,f); left(p,f); left(p,f);
 }
