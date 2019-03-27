@@ -2,84 +2,83 @@
 #include <time.h>
 #include <string.h>
 
-#define CUBE cP, cF
-#define CUBEIN Cubelet p[3][3][3], Cubelet f[12][9]
 typedef enum Cubelet Cubelet;
-
-enum Cubelet {  WRB, WRG, WOG, WOB, WR, WO, WB, WG,
+enum Cubelet {  WRB, WRG, WOG, WOB, WR, WO, WB, WG, //TODO does this compile to like - enum enum Cubelet { ... ???
 				YRB, YRG, YOG, YOB, YR, YO, YB, YG,
 				 RB,  RG,  OG,  OB,
 				 W, Y, O, R, G, B, N }; //RED X ORANGE --- WHITE X YELLOW --- BLUE X GREEN
 
 char solution[350] = {0};
 int solutionLen = 0;
-//TODO: at the end of execution check for 3 or four of the same move in a row, a move followed by its inverse, x of a move paired with x of its inverse ect. to remove accidental repreated steps
 
-int topBottomEdgeCheck(CUBEIN, int i, int j, int k);
+Cubelet cP[3][3][3] = { //Positions of the Cubes
+			{ { WOB,  WB, WRB }, //BACK
+			  {  OB,   B,  RB },
+			  { YOB,  YB, YRB }
+			 }, {
+			  {  WO,   W,  WR }, //MIDDLE
+			  {   O,   N,   R },
+			  {  YO,   Y,  YR }
+			 }, {
+			  { WOG,  WG, WRG }, //FRONT
+			  {  OG,   G,  RG },
+			  { YOG,  YG, YRG }
+			} };
+Cubelet cF[12][9] = { //Values of each of the cube faces
+			N, N, N, W, W, W, N, N, N,
+			N, N, N, W, W, W, N, N, N,
+			N, N, N, W, W, W, N, N, N,
+			O, O, O, G, G, G, R, R, R,
+			O, O, O, G, G, G, R, R, R,
+			O, O, O, G, G, G, R, R, R,
+			N, N, N, Y, Y, Y, N, N, N,
+			N, N, N, Y, Y, Y, N, N, N,
+			N, N, N, Y, Y, Y, N, N, N,
+			N, N, N, B, B, B, N, N, N,
+			N, N, N, B, B, B, N, N, N,
+			N, N, N, B, B, B, N, N, N	};
 
-void whiteCross(Cubelet p[3][3][3], Cubelet f[12][9]);
-void findCube(Cubelet p[3][3][3], Cubelet c, int* i, int* j, int* k);
-void moveEdgeToBottom(CUBEIN, int i, int j, int k);
-void moveEdgeToColumn(CUBEIN, Cubelet column, int i, int j, int k);
-void putEdgeInPosition(CUBEIN, int i, int j, int k);
-int whiteCrossOrientationCheck(CUBEIN, int i, int j, int k);
 
-void printCube(Cubelet p[3][3][3], Cubelet f[12][9], int which);
+int topBottomEdgeCheck(int i, int j, int k);
+
+void whiteCross();
+void findCube(Cubelet c, int* i, int* j, int* k);
+void moveEdgeToBottom(int i, int j, int k);
+void moveEdgeToColumn(Cubelet column, int i, int j, int k);
+void putEdgeInPosition(int i, int j, int k);
+int whiteCrossOrientationCheck(int i, int j, int k);
+
+void printCube(int which);
 void fixInverse();
 
-void front(Cubelet p[3][3][3], Cubelet f[12][9]);
-void back(Cubelet p[3][3][3], Cubelet f[12][9]);
-void down(Cubelet p[3][3][3], Cubelet f[12][9]);
-void up(Cubelet p[3][3][3], Cubelet f[12][9]);
-void right(Cubelet p[3][3][3], Cubelet f[12][9]);
-void left(Cubelet p[3][3][3], Cubelet f[12][9]);
-void frontInverse(Cubelet p[3][3][3], Cubelet f[12][9]);
-void backInverse(Cubelet p[3][3][3], Cubelet f[12][9]);
-void downInverse(Cubelet p[3][3][3], Cubelet f[12][9]);
-void upInverse(Cubelet p[3][3][3], Cubelet f[12][9]);
-void rightInverse(Cubelet p[3][3][3], Cubelet f[12][9]);
-void leftInverse(Cubelet p[3][3][3], Cubelet f[12][9]);
+void front();
+void back();
+void down();
+void up();
+void right();
+void left();
+void frontInverse();
+void backInverse();
+void downInverse();
+void upInverse();
+void rightInverse();
+void leftInverse();
 
 int main(int argc, char* argv[]) {
-	Cubelet cP[3][3][3] = { //Positions of the Cubes
-				{ { WOB,  WB, WRB }, //BACK
-				  {  OB,   B,  RB },
-				  { YOB,  YB, YRB }
-				 }, {
-				  {  WO,   W,  WR }, //MIDDLE
-				  {   O,   N,   R },
-				  {  YO,   Y,  YR }
-				 }, {
-				  { WOG,  WG, WRG }, //FRONT
-				  {  OG,   G,  RG },
-				  { YOG,  YG, YRG }
-				} };
-	Cubelet cF[12][9] = { //Values of each of the cube faces
-				N, N, N, W, W, W, N, N, N,
-				N, N, N, W, W, W, N, N, N,
-				N, N, N, W, W, W, N, N, N,
-				O, O, O, G, G, G, R, R, R,
-				O, O, O, G, G, G, R, R, R,
-				O, O, O, G, G, G, R, R, R,
-				N, N, N, Y, Y, Y, N, N, N,
-				N, N, N, Y, Y, Y, N, N, N,
-				N, N, N, Y, Y, Y, N, N, N,
-				N, N, N, B, B, B, N, N, N,
-				N, N, N, B, B, B, N, N, N,
-				N, N, N, B, B, B, N, N, N	};
+
 
 
 	//Do Stuff
 	if (1==2) { //Make A Cool Pattern
-		right(CUBE);
-		leftInverse(CUBE);
-		front(CUBE);
-		backInverse(CUBE);
-		up(CUBE);
-		downInverse(CUBE);
-		right(CUBE);
-		leftInverse(CUBE);
-		printCube(CUBE, 1);
+		right();
+		leftInverse();
+		front();
+		backInverse();
+		up();
+		downInverse();
+		right();
+		leftInverse();
+		printCube(1);
 	}
 	if (1==1) {
 		int i;
@@ -89,40 +88,40 @@ int main(int argc, char* argv[]) {
 		int r = rand() % 12;
  		switch (r) {
 			case  0:
-				right(CUBE);
+				right();
 				break;
 			case  1:
-				left(CUBE);
+				left();
 				break;
 			case  2:
-				up(CUBE);
+				up();
 				break;
 			case  3:
-				down(CUBE);
+				down();
 				break;
 			case  4:
-				front(CUBE);
+				front();
 				break;
 			case  5:
-				back(CUBE);
+				back();
 				break;
 			case  6:
-				rightInverse(CUBE);
+				rightInverse();
 				break;
 			case  7:
-				leftInverse(CUBE);
+				leftInverse();
 				break;
 			case  8:
-				upInverse(CUBE);
+				upInverse();
 				break;
 			case  9:
-				downInverse(CUBE);
+				downInverse();
 				break;
 			case 10:
-				frontInverse(CUBE);
+				frontInverse();
 				break;
 			case 11:
-				backInverse(CUBE);
+				backInverse();
 				break;
 		}
 		} //Randomize Cube State
@@ -131,15 +130,15 @@ int main(int argc, char* argv[]) {
 	}
 
 	if (1==1) {
-		printCube(CUBE, 1);
-		whiteCross(CUBE);
-		printCube(CUBE, 1);
+		printCube(1);
+		whiteCross();
+		printCube(1);
 		fixInverse();
 		printf("%s\n", solution);
 	}
 	return 0;
 }
-void fixInverse() {
+void fixInverse() { //TODO: Deal with four of something in a row & inverse next to regular move
 	int i;
 	int cnt = 0;
 	Cubelet lastC = N;
@@ -154,156 +153,156 @@ void fixInverse() {
 		}
 	}
 }
-void whiteCross(Cubelet p[3][3][3], Cubelet f[12][9]) {
+void whiteCross() {
 	int i, j, k;
 	//WR
-	findCube(p, WR, &i, &j, &k);
-	moveEdgeToBottom(p, f, i, j, k);
-	findCube(p, WR, &i, &j, &k); //TODO: this in inneficent
-	moveEdgeToColumn(p, f, R, i, j, k);
-	findCube(p, WR, &i, &j, &k);
-	putEdgeInPosition(p, f, i, j, k);
+	findCube(WR, &i, &j, &k); //TODO: move the findCube into moveEdgeToBottom?
+	moveEdgeToBottom(i, j, k);
+	findCube(WR, &i, &j, &k); //TODO: this in inneficent
+	moveEdgeToColumn(R, i, j, k);
+	findCube(WR, &i, &j, &k);
+	putEdgeInPosition(i, j, k);
 	//WB
-	findCube(p, WB, &i, &j, &k);
-	moveEdgeToBottom(p, f, i, j, k);
-	findCube(p, WB, &i, &j, &k); //TODO: this in inneficent
-	moveEdgeToColumn(p, f, B, i, j, k);
-	findCube(p, WB, &i, &j, &k);
-	putEdgeInPosition(p, f, i, j, k);
+	findCube(WB, &i, &j, &k);
+	moveEdgeToBottom(i, j, k);
+	findCube(WB, &i, &j, &k); //TODO: this in inneficent
+	moveEdgeToColumn(B, i, j, k);
+	findCube(WB, &i, &j, &k);
+	putEdgeInPosition(i, j, k);
 	//WO
-	findCube(p, WO, &i, &j, &k);
-	moveEdgeToBottom(p, f, i, j, k);
-	findCube(p, WO, &i, &j, &k); //TODO: this in inneficent
-	moveEdgeToColumn(p, f, O, i, j, k);
-	findCube(p, WO, &i, &j, &k);
-	putEdgeInPosition(p, f, i, j, k);
+	findCube(WO, &i, &j, &k);
+	moveEdgeToBottom(i, j, k);
+	findCube(WO, &i, &j, &k); //TODO: this in inneficent
+	moveEdgeToColumn(O, i, j, k);
+	findCube(WO, &i, &j, &k);
+	putEdgeInPosition(i, j, k);
 	//WG
-	findCube(p, WG, &i, &j, &k);
-	moveEdgeToBottom(p, f, i, j, k);
-	findCube(p, WG, &i, &j, &k); //TODO: this in inneficent
-	moveEdgeToColumn(p, f, G, i, j, k);
-	findCube(p, WG, &i, &j, &k);
-	putEdgeInPosition(p, f, i, j, k);
+	findCube(WG, &i, &j, &k);
+	moveEdgeToBottom(i, j, k);
+	findCube(WG, &i, &j, &k); //TODO: this in inneficent
+	moveEdgeToColumn(G, i, j, k);
+	findCube(WG, &i, &j, &k);
+	putEdgeInPosition(i, j, k);
 }
-int topBottomEdgeCheck(CUBEIN, int i, int j, int k) { //Checks the Orientation of Edges On The Top or Bottom Layer : TODO: this can be used for last 2 layers and maybe f2l
+
+int topBottomEdgeCheck(int i, int j, int k) { //Checks the Orientation of Edges On The Top or Bottom Layer : TODO: this can be used for last 2 layers and maybe f2l
 	if (j == 0) {
-		if (i == 0) return f[0][4] == f[1][4];
-		else if (i == 2) return f[1][4] == f[2][4];
+		if (i == 0) return cF[0][4] == cF[1][4];
+		else if (i == 2) return cF[1][4] == cF[2][4];
 		else {
-			if (k == 0) return f[1][3] == f[1][4];
-			else return f[1][4] == f[1][5];
+			if (k == 0) return cF[1][3] == cF[1][4];
+			else return cF[1][4] == cF[1][5];
 		}
 	}
 	else if (j == 2) {
-		if (i == 0) return f[7][4] == f[8][4];
-		else if (i == 2) return f[6][4] == f[7][4];
+		if (i == 0) return cF[7][4] == cF[8][4];
+		else if (i == 2) return cF[6][4] == cF[7][4];
 		else {
-			if (k == 0) return f[7][3] == f[7][4];
-			else return f[7][4] == f[7][5];
+			if (k == 0) return cF[7][3] == cF[7][4];
+			else return cF[7][4] == cF[7][5];
 		}
 	}
 	else {
 		return -1;
-		//printf("topBottomEdgeCheck had invalid location to check\n");
-		//exit();
+		//printf("topBottomEdgeCheck had invalid location to check\n"); //TODO
 	}
 }
-void putEdgeInPosition(CUBEIN, int i, int j, int k) {
-	if (whiteCrossOrientationCheck(p, f, i, j, k)) {
-		if (i == 0) { back(p, f); back(p, f); }
-		else if (i == 2) { front(p, f); front(p, f); }
+void putEdgeInPosition(int i, int j, int k) { //TODO: make it so that it is not just a bandaid solution of the last edge.. also why does only that one misbehave?
+	if (whiteCrossOrientationCheck(i, j, k)) {
+		if (i == 0) { back(); back(); }
+		else if (i == 2) { front(); front(); }
 		else {
-			if (k == 0) { left(p, f); left(p, f); }
-			else { right(p, f); right(p, f); }
+			if (k == 0) { left(); left(); }
+			else { right(); right(); }
 		}
 	}
 	else {
-		if (i == 0) { down(p, f); left(p, f); backInverse(p, f); leftInverse(p, f); }
-		else if (i == 2) { down(p, f); right(p, f); frontInverse(p, f); rightInverse(p, f); }
+		if (i == 0) { down(); left(); backInverse(); leftInverse(); }
+		else if (i == 2) { down(); right(); frontInverse(); rightInverse(); }
 		else {
-			if (k == 0) { down(p, f); front(p, f); leftInverse(p, f); frontInverse(p, f); }
-			else { down(p, f); back(p, f); rightInverse(p, f); backInverse(p, f); }
+			if (k == 0) { down(); front(); leftInverse(); frontInverse(); }
+			else { down(); back(); rightInverse(); backInverse(); }
 		}
 	}
 }
-int whiteCrossOrientationCheck(CUBEIN, int i, int j, int k) {
+int whiteCrossOrientationCheck(int i, int j, int k) {
 	if (j != 2) {
 		return -1;
 	}
 
-	if (i == 0) return f[9][4] == f[10][4];
-	else if (i == 2) return f[4][4] == f[5][4];
+	if (i == 0) return cF[9][4] == cF[10][4];
+	else if (i == 2) return cF[4][4] == cF[5][4];
 	else {
-		if (k == 0) return f[4][1] == f[5][1];
-		else return f[4][7] == f[5][7];
+		if (k == 0) return cF[4][1] == cF[5][1];
+		else return cF[4][7] == cF[5][7];
 	}
 }
-void moveEdgeToColumn(CUBEIN, Cubelet column, int i, int j, int k) {
-	Cubelet search = p[i][j][k];
-	while (column != p[i][j-1][k]) {
-		down(p, f);
-		findCube(p, search, &i, &j, &k);
+void moveEdgeToColumn(Cubelet column, int i, int j, int k) {
+	Cubelet search = cP[i][j][k];
+	while (column != cP[i][j-1][k]) {
+		down();
+		findCube(search, &i, &j, &k);
 	}
 }
-void moveEdgeToBottom(CUBEIN, int i, int j, int k) {
-	int count = 0;
+void moveEdgeToBottom(int i, int j, int k) {
+	//int count = 0; //TODO
 	if (i == 0) {
 		if (j == 0) {
-			back(p, f);
-			back(p, f);
+			back();
+			back();
 		}
 		else if (j == 1) {
 			if (k == 0) { //TODO: what about the order of the solution makes it so that only the last one (back/blue) is removed from its place?
-				back(p, f);
-				down(p, f);
-				backInverse(p, f);
+				back();
+				down();
+				backInverse();
 			}
 			else {
-				backInverse(p, f);
-				down(p, f);
-				back(p, f);
+				backInverse();
+				down();
+				back();
 			}
 		}
 	}
 	else if (i == 1) {
 		if (j == 0) {
 			if (k == 0) {
-				left(p, f);
-				left(p, f);
+				left();
+				left();
 			}
 			else {
-				right(p, f);
-				right(p, f);
+				right();
+				right();
 			}
 		}
 	}
 	else {
 		if (j == 0) {
-			front(p, f);
-			front(p, f);
+			front();
+			front();
 		}
 		else if(j == 1) {
 			if (k == 0) {
-				frontInverse(p, f);
+				frontInverse();
 			}
 			else {
-				front(p, f);
+				front();
 			}
 		}
 	}
 }
-void findCube(Cubelet p[3][3][3], Cubelet search, int* i, int* j, int* k) {
+void findCube(Cubelet search, int* i, int* j, int* k) {
 	for(*i=0; *i<3; (*i)++) {
 		for(*j=0; *j<3; (*j)++) {
 			for(*k=0; *k<3; (*k)++) {
-				if(p[*i][*j][*k] == search) return;
+				if(cP[*i][*j][*k] == search) return;
 			}
 		}
 	}
 }
 
 // which = 0 for position, 1 for faces, 2 for both
-void printCube(Cubelet p[3][3][3], Cubelet f[12][9], int which) { //TODO print positions also
+void printCube(int which) { //TODO print positions also
 	char* enumStrings[27] = {
 		"WRB", "WRG", "WOG", "WOB", "WR", "WO", "WB", "WG",
 		"YRB", "YRG", "YOG", "YOB", "YR", "YO", "YB", "WG",
@@ -316,7 +315,7 @@ void printCube(Cubelet p[3][3][3], Cubelet f[12][9], int which) { //TODO print p
 		else printf("  ");
 		for (j=0; j<9; j++) {
 			if (j==3 || j==6) printf("| ");
-			printf("%s ", enumStrings[ f[i][j] ]);
+			printf("%s ", enumStrings[ cF[i][j] ]);
 		}
 		if (i>2 && i<6) printf("|");
 		if (i>1 && i<6) printf("\n-------------------------\n");
@@ -327,7 +326,7 @@ void printCube(Cubelet p[3][3][3], Cubelet f[12][9], int which) { //TODO print p
 	for (i=0; i<3; i++) {
 		for (j=0; j<3; j++) {
 			for (k=0; k<3; k++) {
-				printf("%3s ", enumStrings[ p[i][j][k] ]);
+				printf("%3s ", enumStrings[ cP[i][j][k] ]);
 			}
 			printf("\n");
 		}
@@ -336,119 +335,119 @@ void printCube(Cubelet p[3][3][3], Cubelet f[12][9], int which) { //TODO print p
 	//print positions
 }
 
-void front(Cubelet p[3][3][3], Cubelet f[12][9]) {
+void front() {
 	strcat(solution, "F");
 	solutionLen++;
 	
 	Cubelet tmp;
-	tmp = p[2][0][0]; p[2][0][0] = p[2][2][0]; p[2][2][0] = p[2][2][2]; p[2][2][2] = p[2][0][2]; p[2][0][2] = tmp; //Front Position Corner Moves
-	tmp = p[2][0][1]; p[2][0][1] = p[2][1][0]; p[2][1][0] = p[2][2][1]; p[2][2][1] = p[2][1][2]; p[2][1][2] = tmp; //Front Position Edge Moves
-	tmp = f[3][3]; f[3][3] = f[5][3]; f[5][3] = f[5][5]; f[5][5] = f[3][5]; f[3][5] = tmp; //Front Face Corners
-	tmp = f[4][3]; f[4][3] = f[5][4]; f[5][4] = f[4][5]; f[4][5] = f[3][4]; f[3][4] = tmp; //Front Face Edges
-	tmp = f[2][3]; f[2][3] = f[5][2]; f[5][2] = f[6][5]; f[6][5] = f[3][6]; f[3][6] = tmp; //Front Edge Corners
-	tmp = f[2][4]; f[2][4] = f[4][2]; f[4][2] = f[6][4]; f[6][4] = f[4][6]; f[4][6] = tmp; //Front Edge Edges
-	tmp = f[2][5]; f[2][5] = f[3][2]; f[3][2] = f[6][3]; f[6][3] = f[5][6]; f[5][6] = tmp; //Front Edge Corners Part 2 TODO 
+	tmp = cP[2][0][0]; cP[2][0][0] = cP[2][2][0]; cP[2][2][0] = cP[2][2][2]; cP[2][2][2] = cP[2][0][2]; cP[2][0][2] = tmp; //Front Position Corner Moves
+	tmp = cP[2][0][1]; cP[2][0][1] = cP[2][1][0]; cP[2][1][0] = cP[2][2][1]; cP[2][2][1] = cP[2][1][2]; cP[2][1][2] = tmp; //Front Position Edge Moves
+	tmp = cF[3][3]; cF[3][3] = cF[5][3]; cF[5][3] = cF[5][5]; cF[5][5] = cF[3][5]; cF[3][5] = tmp; //Front Face Corners
+	tmp = cF[4][3]; cF[4][3] = cF[5][4]; cF[5][4] = cF[4][5]; cF[4][5] = cF[3][4]; cF[3][4] = tmp; //Front Face Edges
+	tmp = cF[2][3]; cF[2][3] = cF[5][2]; cF[5][2] = cF[6][5]; cF[6][5] = cF[3][6]; cF[3][6] = tmp; //Front Edge Corners
+	tmp = cF[2][4]; cF[2][4] = cF[4][2]; cF[4][2] = cF[6][4]; cF[6][4] = cF[4][6]; cF[4][6] = tmp; //Front Edge Edges
+	tmp = cF[2][5]; cF[2][5] = cF[3][2]; cF[3][2] = cF[6][3]; cF[6][3] = cF[5][6]; cF[5][6] = tmp; //Front Edge Corners Part 2 TODO 
 }
-void back(Cubelet p[3][3][3], Cubelet f[12][9]) {
+void back() {
 	strcat(solution, "B");
 	solutionLen++;
 
 	Cubelet tmp;
-	tmp = p[0][0][0]; p[0][0][0] = p[0][0][2]; p[0][0][2] = p[0][2][2]; p[0][2][2] = p[0][2][0]; p[0][2][0] = tmp; //Back Position Corner Moves
-	tmp = p[0][0][1]; p[0][0][1] = p[0][1][2]; p[0][1][2] = p[0][2][1]; p[0][2][1] = p[0][1][0]; p[0][1][0] = tmp; //Back Position Edge Moves
-	tmp = f[9][3]; f[9][3] = f[11][3]; f[11][3] = f[11][5]; f[11][5] = f[9][5]; f[9][5] = tmp; //Back Face Corners
-	tmp = f[9][4]; f[9][4] = f[10][3]; f[10][3] = f[11][4]; f[11][4] = f[10][5]; f[10][5] = tmp; //Back Face Edges
-	tmp = f[8][5]; f[8][5] = f[5][0]; f[5][0] = f[0][3]; f[0][3] = f[3][8]; f[3][8] = tmp; //Back Edge Corners
-	tmp = f[8][4]; f[8][4] = f[4][0]; f[4][0] = f[0][4]; f[0][4] = f[4][8]; f[4][8] = tmp; //Back Edge Edges
-	tmp = f[8][3]; f[8][3] = f[3][0]; f[3][0] = f[0][5]; f[0][5] = f[5][8]; f[5][8] = tmp; //Back Edge Corners Part 2 TODO
+	tmp = cP[0][0][0]; cP[0][0][0] = cP[0][0][2]; cP[0][0][2] = cP[0][2][2]; cP[0][2][2] = cP[0][2][0]; cP[0][2][0] = tmp; //Back Position Corner Moves
+	tmp = cP[0][0][1]; cP[0][0][1] = cP[0][1][2]; cP[0][1][2] = cP[0][2][1]; cP[0][2][1] = cP[0][1][0]; cP[0][1][0] = tmp; //Back Position Edge Moves
+	tmp = cF[9][3]; cF[9][3] = cF[11][3]; cF[11][3] = cF[11][5]; cF[11][5] = cF[9][5]; cF[9][5] = tmp; //Back Face Corners
+	tmp = cF[9][4]; cF[9][4] = cF[10][3]; cF[10][3] = cF[11][4]; cF[11][4] = cF[10][5]; cF[10][5] = tmp; //Back Face Edges
+	tmp = cF[8][5]; cF[8][5] = cF[5][0]; cF[5][0] = cF[0][3]; cF[0][3] = cF[3][8]; cF[3][8] = tmp; //Back Edge Corners
+	tmp = cF[8][4]; cF[8][4] = cF[4][0]; cF[4][0] = cF[0][4]; cF[0][4] = cF[4][8]; cF[4][8] = tmp; //Back Edge Edges
+	tmp = cF[8][3]; cF[8][3] = cF[3][0]; cF[3][0] = cF[0][5]; cF[0][5] = cF[5][8]; cF[5][8] = tmp; //Back Edge Corners Part 2 TODO
 }
-void down(Cubelet p[3][3][3], Cubelet f[12][9]) {
+void down() {
 	strcat(solution, "D");
 	solutionLen++;
 	
 	Cubelet tmp;
-	tmp = p[0][2][0]; p[0][2][0] = p[0][2][2]; p[0][2][2] = p[2][2][2]; p[2][2][2] = p[2][2][0]; p[2][2][0] = tmp; //Down Position Corner Moves
-	tmp = p[0][2][1]; p[0][2][1] = p[1][2][2]; p[1][2][2] = p[2][2][1]; p[2][2][1] = p[1][2][0]; p[1][2][0] = tmp; //Down Positioin Edge Moves
-	tmp = f[6][3]; f[6][3] = f[8][3]; f[8][3] = f[8][5]; f[8][5] = f[6][5]; f[6][5] = tmp; //Down Face Corners
-	tmp = f[6][4]; f[6][4] = f[7][3]; f[7][3] = f[8][4]; f[8][4] = f[7][5]; f[7][5] = tmp; //Down Face Edges
-	tmp = f[5][8]; f[5][8] = f[5][5]; f[5][5] = f[5][2]; f[5][2] = f[9][3]; f[9][3] = tmp; //Down Edge Corners
-	tmp = f[5][7]; f[5][7] = f[5][4]; f[5][4] = f[5][1]; f[5][1] = f[9][4]; f[9][4] = tmp; //Down Edge Edges
-	tmp = f[5][6]; f[5][6] = f[5][3]; f[5][3] = f[5][0]; f[5][0] = f[9][5]; f[9][5] = tmp; //Down Edge Corners Part 2 TODO
+	tmp = cP[0][2][0]; cP[0][2][0] = cP[0][2][2]; cP[0][2][2] = cP[2][2][2]; cP[2][2][2] = cP[2][2][0]; cP[2][2][0] = tmp; //Down Position Corner Moves
+	tmp = cP[0][2][1]; cP[0][2][1] = cP[1][2][2]; cP[1][2][2] = cP[2][2][1]; cP[2][2][1] = cP[1][2][0]; cP[1][2][0] = tmp; //Down Positioin Edge Moves
+	tmp = cF[6][3]; cF[6][3] = cF[8][3]; cF[8][3] = cF[8][5]; cF[8][5] = cF[6][5]; cF[6][5] = tmp; //Down Face Corners
+	tmp = cF[6][4]; cF[6][4] = cF[7][3]; cF[7][3] = cF[8][4]; cF[8][4] = cF[7][5]; cF[7][5] = tmp; //Down Face Edges
+	tmp = cF[5][8]; cF[5][8] = cF[5][5]; cF[5][5] = cF[5][2]; cF[5][2] = cF[9][3]; cF[9][3] = tmp; //Down Edge Corners
+	tmp = cF[5][7]; cF[5][7] = cF[5][4]; cF[5][4] = cF[5][1]; cF[5][1] = cF[9][4]; cF[9][4] = tmp; //Down Edge Edges
+	tmp = cF[5][6]; cF[5][6] = cF[5][3]; cF[5][3] = cF[5][0]; cF[5][0] = cF[9][5]; cF[9][5] = tmp; //Down Edge Corners Part 2 TODO
 }
-void up(Cubelet p[3][3][3], Cubelet f[12][9]) {
+void up() {
 	strcat(solution, "U");
 	solutionLen++;
 	
 	Cubelet tmp;
-	tmp = p[0][0][0]; p[0][0][0] = p[2][0][0]; p[2][0][0] = p[2][0][2]; p[2][0][2] = p[0][0][2]; p[0][0][2] = tmp; //Up Position Corner Moves
-	tmp = p[0][0][1]; p[0][0][1] = p[1][0][0]; p[1][0][0] = p[2][0][1]; p[2][0][1] = p[1][0][2]; p[1][0][2] = tmp; //Up Position Edge Moves
-	tmp = f[0][3]; f[0][3] = f[2][3]; f[2][3] = f[2][5]; f[2][5] = f[0][5];  f[0][5] = tmp; //Up Face Corners
-	tmp = f[0][4]; f[0][4] = f[1][3]; f[1][3] = f[2][4]; f[2][4] = f[1][5];  f[1][5] = tmp; //Up Face Edges
-	tmp = f[3][0]; f[3][0] = f[3][3]; f[3][3] = f[3][6]; f[3][6] = f[11][5]; f[11][5] = tmp; //Up Edge Corners
-	tmp = f[3][1]; f[3][1] = f[3][4]; f[3][4] = f[3][7]; f[3][7] = f[11][4]; f[11][4] = tmp; //Up Edge Edges
-	tmp = f[3][2]; f[3][2] = f[3][5]; f[3][5] = f[3][8]; f[3][8] = f[11][3]; f[11][3] = tmp; //Up Edge Corners Part 2 TODO: Name this better (and the simmilar ones also)
+	tmp = cP[0][0][0]; cP[0][0][0] = cP[2][0][0]; cP[2][0][0] = cP[2][0][2]; cP[2][0][2] = cP[0][0][2]; cP[0][0][2] = tmp; //Up Position Corner Moves
+	tmp = cP[0][0][1]; cP[0][0][1] = cP[1][0][0]; cP[1][0][0] = cP[2][0][1]; cP[2][0][1] = cP[1][0][2]; cP[1][0][2] = tmp; //Up Position Edge Moves
+	tmp = cF[0][3]; cF[0][3] = cF[2][3]; cF[2][3] = cF[2][5]; cF[2][5] = cF[0][5];  cF[0][5] = tmp; //Up Face Corners
+	tmp = cF[0][4]; cF[0][4] = cF[1][3]; cF[1][3] = cF[2][4]; cF[2][4] = cF[1][5];  cF[1][5] = tmp; //Up Face Edges
+	tmp = cF[3][0]; cF[3][0] = cF[3][3]; cF[3][3] = cF[3][6]; cF[3][6] = cF[11][5]; cF[11][5] = tmp; //Up Edge Corners
+	tmp = cF[3][1]; cF[3][1] = cF[3][4]; cF[3][4] = cF[3][7]; cF[3][7] = cF[11][4]; cF[11][4] = tmp; //Up Edge Edges
+	tmp = cF[3][2]; cF[3][2] = cF[3][5]; cF[3][5] = cF[3][8]; cF[3][8] = cF[11][3]; cF[11][3] = tmp; //Up Edge Corners Part 2 TODO: Name this better (and the simmilar ones also)
 }
-void right(Cubelet p[3][3][3], Cubelet f[12][9]) {
+void right() {
 	strcat(solution, "R");
 	solutionLen++;
 	
 	Cubelet tmp;
-	tmp = p[0][0][2]; p[0][0][2] = p[2][0][2]; p[2][0][2] = p[2][2][2]; p[2][2][2] = p[0][2][2]; p[0][2][2] = tmp; //Right Position Corner Moves
-	tmp = p[0][1][2]; p[0][1][2] = p[1][0][2]; p[1][0][2] = p[2][1][2]; p[2][1][2] = p[1][2][2]; p[1][2][2] = tmp;//Right Position Edge Moves
-	tmp = f[3][6]; f[3][6] = f[5][6]; f[5][6] = f[5][8]; f[5][8] = f[3][8];  f[3][8] = tmp; //Right Face Corners
-	tmp = f[4][6]; f[4][6] = f[5][7]; f[5][7] = f[4][8]; f[4][8] = f[3][7];  f[3][7] = tmp; //Right Face Edges
-	tmp = f[0][5]; f[0][5] = f[3][5]; f[3][5] = f[6][5]; f[6][5] = f[9][5];  f[9][5] = tmp; //Right Edge Corners
-	tmp = f[1][5]; f[1][5] = f[4][5]; f[4][5] = f[7][5]; f[7][5] = f[10][5]; f[10][5] = tmp; //Right Edge Edges
-	tmp = f[2][5]; f[2][5] = f[5][5]; f[5][5] = f[8][5]; f[8][5] = f[11][5]; f[11][5] = tmp; //Right Edge Corners Part 2 TODO
+	tmp = cP[0][0][2]; cP[0][0][2] = cP[2][0][2]; cP[2][0][2] = cP[2][2][2]; cP[2][2][2] = cP[0][2][2]; cP[0][2][2] = tmp; //Right Position Corner Moves
+	tmp = cP[0][1][2]; cP[0][1][2] = cP[1][0][2]; cP[1][0][2] = cP[2][1][2]; cP[2][1][2] = cP[1][2][2]; cP[1][2][2] = tmp;//Right Position Edge Moves
+	tmp = cF[3][6]; cF[3][6] = cF[5][6]; cF[5][6] = cF[5][8]; cF[5][8] = cF[3][8];  cF[3][8] = tmp; //Right Face Corners
+	tmp = cF[4][6]; cF[4][6] = cF[5][7]; cF[5][7] = cF[4][8]; cF[4][8] = cF[3][7];  cF[3][7] = tmp; //Right Face Edges
+	tmp = cF[0][5]; cF[0][5] = cF[3][5]; cF[3][5] = cF[6][5]; cF[6][5] = cF[9][5];  cF[9][5] = tmp; //Right Edge Corners
+	tmp = cF[1][5]; cF[1][5] = cF[4][5]; cF[4][5] = cF[7][5]; cF[7][5] = cF[10][5]; cF[10][5] = tmp; //Right Edge Edges
+	tmp = cF[2][5]; cF[2][5] = cF[5][5]; cF[5][5] = cF[8][5]; cF[8][5] = cF[11][5]; cF[11][5] = tmp; //Right Edge Corners Part 2 TODO
 }
-void left(Cubelet p[3][3][3], Cubelet f[12][9]) {
+void left() {
 	strcat(solution, "L");
 	solutionLen++;
 	
 	Cubelet tmp;
-	tmp = p[0][0][0]; p[0][0][0] = p[0][2][0]; p[0][2][0] = p[2][2][0]; p[2][2][0] = p[2][0][0]; p[2][0][0] = tmp; //Left Position Moves
-	tmp = p[0][1][0]; p[0][1][0] = p[1][2][0]; p[1][2][0] = p[2][1][0]; p[2][1][0] = p[1][0][0]; p[1][0][0] = tmp;//Left Position Edge Moves
-	tmp = f[3][2];  f[3][2] =  f[3][0]; f[3][0] = f[5][0]; f[5][0] = f[5][2];  f[5][2] = tmp; //Left Face Corners
-	tmp = f[3][1];  f[3][1] =  f[4][0]; f[4][0] = f[5][1]; f[5][1] = f[4][2];  f[4][2] = tmp; //Left Face Edges
-	tmp = f[9][3];  f[9][3] =  f[6][3]; f[6][3] = f[3][3]; f[3][3] = f[0][3];  f[0][3] = tmp; //Left Edge Corners
-	tmp = f[10][3]; f[10][3] = f[7][3]; f[7][3] = f[4][3]; f[4][3] = f[1][3];  f[1][3] = tmp; //Left Edge Edges
-	tmp = f[11][3]; f[11][3] = f[8][3]; f[8][3] = f[5][3]; f[5][3] = f[2][3];  f[2][3] = tmp; //Left Edge Corners Part 2 TODO
+	tmp = cP[0][0][0]; cP[0][0][0] = cP[0][2][0]; cP[0][2][0] = cP[2][2][0]; cP[2][2][0] = cP[2][0][0]; cP[2][0][0] = tmp; //Left Position Moves
+	tmp = cP[0][1][0]; cP[0][1][0] = cP[1][2][0]; cP[1][2][0] = cP[2][1][0]; cP[2][1][0] = cP[1][0][0]; cP[1][0][0] = tmp;//Left Position Edge Moves
+	tmp = cF[3][2];  cF[3][2] =  cF[3][0]; cF[3][0] = cF[5][0]; cF[5][0] = cF[5][2];  cF[5][2] = tmp; //Left Face Corners
+	tmp = cF[3][1];  cF[3][1] =  cF[4][0]; cF[4][0] = cF[5][1]; cF[5][1] = cF[4][2];  cF[4][2] = tmp; //Left Face Edges
+	tmp = cF[9][3];  cF[9][3] =  cF[6][3]; cF[6][3] = cF[3][3]; cF[3][3] = cF[0][3];  cF[0][3] = tmp; //Left Edge Corners
+	tmp = cF[10][3]; cF[10][3] = cF[7][3]; cF[7][3] = cF[4][3]; cF[4][3] = cF[1][3];  cF[1][3] = tmp; //Left Edge Edges
+	tmp = cF[11][3]; cF[11][3] = cF[8][3]; cF[8][3] = cF[5][3]; cF[5][3] = cF[2][3];  cF[2][3] = tmp; //Left Edge Corners Part 2 TODO
 }
-void frontInverse(Cubelet p[3][3][3], Cubelet f[12][9]) {
+void frontInverse() {
 	//strcat(solution, "iF ");
 	//solutionLen+=3;
 	
-	front(p,f); front(p,f); front(p,f);
+	front(); front(); front();
 }
-void backInverse(Cubelet p[3][3][3], Cubelet f[12][9]) {
+void backInverse() {
 	//strcat(solution, "iB ");
 	//solutionLen+=3;
 	
-	back(p,f); back(p,f); back(p,f);
+	back(); back(); back();
 }
-void downInverse(Cubelet p[3][3][3], Cubelet f[12][9]) {
+void downInverse() {
 	//strcat(solution, "iD ");
 	//solutionLen+=3;
 	
-	down(p,f); down(p,f); down(p,f); 
+	down(); down(); down(); 
 }
-void upInverse(Cubelet p[3][3][3], Cubelet f[12][9]) {
+void upInverse() {
 	//strcat(solution, "iU ");
 	//solutionLen+=3;
 	
-	up(p,f); up(p,f); up(p,f);	
+	up(); up(); up();	
 }
-void rightInverse(Cubelet p[3][3][3], Cubelet f[12][9]) {
+void rightInverse() {
 	//strcat(solution, "iR ");
 	//solutionLen+=3;
 	
-	right(p,f); right(p,f); right(p,f);
+	right(); right(); right();
 }
-void leftInverse(Cubelet p[3][3][3], Cubelet f[12][9]) {
+void leftInverse() {
 	//strcat(solution, "iL ");
 	//solutionLen+=3;
 	
-	left(p,f); left(p,f); left(p,f);
+	left(); left(); left();
 }
 
 /*
