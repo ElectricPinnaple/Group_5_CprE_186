@@ -38,6 +38,7 @@ Cubelet cF[12][9] = { //Values of each of the cube faces
 			N, N, N, B, B, B, N, N, N,
 			N, N, N, B, B, B, N, N, N	};
 
+void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge);
 void setUpForF2L(Cubelet corner, Cubelet edge);
 void firstTwoLayers();
 
@@ -131,7 +132,7 @@ int main(int argc, char* argv[]) {
 	if (1==1) {
 		printCube(1);
 		whiteCross();
-		printCube(1);
+		//printCube(1);
 		firstTwoLayers();
 		printCube(1);
 		fixInverse();
@@ -212,12 +213,669 @@ int topBottomEdgeCheck(int i, int j, int k) { //Checks the Orientation of Edges 
 void firstTwoLayers() {
  //I lost those things that i wrote... but i remember so... dope
 
+	setUpForF2L(WOG, OG);
+	//printCube(1);
+	printf("WOG - ");
+	doF2LSolution(G, WOG, OG);
+	setUpForF2L(WRB, RB); //TODO: I'm getting "Abort Trap: 6" for some reason (writing to memory I dont own???)... idk
+	printf("WRB - ");
+	doF2LSolution(B, WRB, RB);
 	setUpForF2L(WOB, OB);
-	//setUpForF2L(WRB, RB); //TODO: I'm getting "Abort Trap: 6" for some reason (writing to memory I dont own???)... idk
-	//setUpForF2L(WOG, OG);
-	//setUpForF2L(WRG, RG); //TODO: also got "Abort Trap: 6" ... idk my man, deal with it later i guess
+	printf("WOB - ");
+	doF2LSolution(O, WOB, OB);
+	setUpForF2L(WRG, RG); //TODO: also got "Abort Trap: 6" ... idk my man, deal with it later i guess
+	printf("WRG - ");
+	//printCube(1);
+	doF2LSolution(R, WRG, RG);
 
 	//TODO
+}
+
+void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is technically unecessary --- but alrighty
+	int i, j, k;
+	int corner_layer,
+		corner_orientation, //0 == "W on TB" - 1 == "face on TB" - 2 == "other on TB" //TODO: make a pretty thing saying what all this
+		edge_position, //4 == "in position" - 0-3 == "start above face and work around clockwise"
+		edge_orientation; ////0 == "correct (correct means face == TB" - 1 == "incorrect"
+
+	findCube(corner, &i, &j, &k);
+	corner_layer = j;
+	Cubelet cornerCheck;
+
+	if(corner_layer == 0) {
+		if (face == G) {
+			cornerCheck = cF[2][3];
+		}
+		else if (face == R) {
+			cornerCheck = cF[2][5];
+		}
+		else if (face == B) {
+			cornerCheck = cF[0][5];
+		}
+		else {
+			cornerCheck = cF[0][3];
+		}
+	}
+	else {
+		if (face == G) {
+			cornerCheck = cF[6][3];
+		}
+		else if (face == R) {
+			cornerCheck = cF[6][5];
+		}
+		else if (face == B) {
+			cornerCheck = cF[8][5];
+		}
+		else {
+			cornerCheck = cF[8][3];
+		}
+	}
+	if (cornerCheck == W) {
+		corner_orientation = 0;
+	}
+	else if (cornerCheck == face) {
+		corner_orientation = 1;
+	}
+	else {
+		corner_orientation = 2;
+	}
+
+	findCube(edge, &i, &j, &k);
+	if (j == 1) {
+		edge_position = 4;
+		if (face == G) {
+			if (cF[4][3] == G) {
+				edge_orientation = 0;
+			}
+			else {
+				edge_orientation = 1;
+			}
+		}
+		else if (face == R) {
+			if (cF[4][6] == R) {
+				edge_orientation = 0;
+			}
+			else {
+				edge_orientation = 1;
+			}		}
+		else if (face == B) {
+			if (cF[10][5] == B) {
+				edge_orientation = 0;
+			}
+			else {
+				edge_orientation = 1;
+			}
+		}
+		else {
+			if (cF[4][0] == O) {
+				edge_orientation = 0;
+			}
+			else {
+				edge_orientation = 1;
+			}
+		}
+	}
+	else {
+		if (i == 2) {
+			edge_position = 0;
+			if (cF[6][4] == face) {
+				edge_orientation = 0;
+			}
+			else {
+				edge_orientation = 1;
+			}
+		}
+		else if (k == 0) {
+			edge_position = 1;
+			if (cF[7][3] == face) {
+				edge_orientation = 0;
+			}
+			else {
+				edge_orientation = 1;
+			}
+		}
+		else if (i == 0) {
+			edge_position = 2;
+			if (cF[8][4] == face) {
+				edge_orientation = 0;
+			}
+			else {
+				edge_orientation = 1;
+			}
+		}
+		else {
+			edge_position = 3;
+			if (cF[7][5] == face) {
+				edge_orientation = 0;
+			}
+			else {
+				edge_orientation = 1;
+			}
+		}
+	}
+	if (edge_position != 4) {
+		if (face == O) {
+			edge_position = (edge_position+3)%4;
+		}
+		else if (face == B) {
+			edge_position = (edge_position+2)%4;
+		}
+		else if (face == R) {
+			edge_position = (edge_position+1)%4;
+		}
+	}
+
+	/* from bottom
+		corner position 2 == top
+					  0 == bottom
+		corner orientation == 0 == "W on TB" - 1 == "face on TB" - 2 == "other on TB" //TODO: make a pretty thing saying what all this
+		edge position 4 == in-place
+					  0 == face
+					  1 == right
+					  2 == back
+					  3 == left
+		edge orientation 0 == it is correct or face is on top
+						 1 == it is incorrect or not-face is on top
+	*/
+	//TODO: remove - testing -- actually, maybe not... could be useful to keep around...
+	//printf("Testing orientation getter-er\nCorner Position: %d\nCorner Orientation: %d\nEdge Position: %d\nEdge Orientation: %d\n", corner_layer, corner_orientation, edge_position, edge_orientation);	
+
+	if (corner_layer == 2) {
+		if (corner_orientation == 0) {
+			if (edge_position == 4) {
+				if (edge_orientation == 0) {
+					printf("J - ");
+					left(face); down(face); leftInverse(face); downInverse(face);
+					left(face); down(face); leftInverse(face); downInverse(face);
+					left(face); down(face); leftInverse(face);
+				}
+				else { //TODO: DO A SEARCH AND REPLEACE FOR () - (face)
+					printf("J - ");
+					left(face); downInverse(face); leftInverse(face);
+					down(face); frontInverse(face); down(face); front(face);
+				}
+			}
+			else if (edge_position == 0) {
+				if (edge_orientation == 0) {
+					printf("J - ");
+					left(face); down(face); leftInverse(face); downInverse(face);
+					downInverse(face);
+					left(face); down(face); leftInverse(face); downInverse(face);
+					left(face); down(face); leftInverse(face);
+				}
+				else {
+					printf("J - ");
+					frontInverse(face); down(face); down(face); front(face);
+					down(face); frontInverse(face); downInverse(face); front(face);
+				}
+			}
+			else if (edge_position == 1) {
+				if (edge_orientation == 0) {
+					printf("J - ");
+					left(face); down(face); down(face); leftInverse(face);
+					downInverse(face); left(face); down(face); leftInverse(face);
+				}
+				else {
+					printf("J - ");
+					frontInverse(face); downInverse(face); front(face); down(face);
+					down(face);
+					frontInverse(face); downInverse(face); front(face); down(face);
+					frontInverse(face); downInverse(face); front(face);
+				}
+			}
+			else if (edge_position == 2) {
+				if (edge_orientation == 0) {
+					printf("J - ");
+					down(face); left(face); down(face); down(face); leftInverse(face);
+					down(face); left(face); downInverse(face); leftInverse(face);	
+				}
+				else {
+					printf("J - ");
+					down(face); down(face); frontInverse(face); downInverse(face); front(face);
+					downInverse(face); frontInverse(face); down(face); front(face);
+				}
+			}
+			else if (edge_position == 3) { //TODO: this can technically just be an if --- would only make it harder to read
+				if (edge_orientation == 0) {
+					printf("J - ");
+					down(face); down(face); left(face); down(face); leftInverse(face);
+					down(face); left(face); downInverse(face); leftInverse(face);	
+				}
+				else {
+					printf("J - ");
+					downInverse(face); frontInverse(face); down(face); down(face); front(face);
+					downInverse(face); frontInverse(face); down(face); front(face);
+				}
+			}
+			printf("YUP\n");
+		}
+		else if (corner_orientation == 1) {
+			if (edge_position == 4) {
+				if (edge_orientation == 0) {
+					printf("A - ");
+					downInverse(face); left(face); downInverse(face); leftInverse(face);
+					downInverse(face); left(face); down(face); down(face); leftInverse(face);
+				}
+				else {
+					printf("B - ");
+					downInverse(face); left(face); down(face); leftInverse(face);
+					down(face);
+					frontInverse(face); downInverse(face); front(face);
+				}
+			}
+			else if (edge_position == 0) {
+				if (edge_orientation == 0) {
+					printf("C - ");
+					frontInverse(face); down(face); front(face); downInverse(face);
+					downInverse(face);
+					left(face); down(face); leftInverse(face);
+				}
+				else {
+					printf("D - ");
+					down(face); frontInverse(face); down(face); front(face); downInverse(face);
+					frontInverse(face); downInverse(face); front(face);
+				}
+			}
+			else if (edge_position == 1) {
+				if (edge_orientation == 0) {
+					printf("E - ");
+					down(face); left(face); downInverse(face); leftInverse(face);
+				}
+				else {
+					printf("F - ");
+					downInverse(face); left(face); down(face); down(face); leftInverse(face); down(face);
+					frontInverse(face); downInverse(face); front(face);
+				}
+			}
+			else if (edge_position == 2) {
+				if (edge_orientation == 0) {
+					printf("G - ");
+					downInverse(face); left(face); down(face); leftInverse(face);
+					downInverse(face); left(face); down(face); down(face); leftInverse(face);
+				}
+				else {
+					printf("H - ");
+					down(face); frontInverse(face); downInverse(face); front(face); downInverse(face);
+					frontInverse(face); downInverse(face); front(face);
+				}
+			}
+			else if (edge_position == 3) { //TODO: this can technically just be an if --- would only make it harder to read
+				if (edge_orientation == 0) {
+					printf("I - ");
+					downInverse(face); left(face); down(face); down(face); leftInverse(face);
+					downInverse(face); left(face); down(face); down(face); leftInverse(face);
+				}
+				else {
+					printf("J - ");
+					frontInverse(face); downInverse(face); front(face);
+				}
+			}
+			printf("GRAPE\n");
+		}
+		else if (corner_orientation == 2) {
+			if (edge_position == 4) {
+				if (edge_orientation == 0) {
+					printf("A - ");
+					down(face); frontInverse(face); down(face); front(face);
+					down(face); frontInverse(face); down(face); down(face); front(face);
+				}
+				else {
+					printf("B - ");
+					down(face); frontInverse(face); downInverse(face); front(face);
+					downInverse(face);
+					left(face); down(face); leftInverse(face); //TODO: this could be a trouble spot... good first place to check
+				}
+			}
+			else if (edge_position == 0) {
+				if (edge_orientation == 0) {
+					printf("C - ");
+					down(face); frontInverse(face); down(face); down(face); front(face); downInverse(face);
+					left(face); down(face); leftInverse(face);
+				}
+				else {
+					printf("D - ");
+					downInverse(face); frontInverse(face); down(face); front(face);
+				}
+			}
+			else if (edge_position == 1) {
+				if (edge_orientation == 0) {
+					printf("E - ");
+					downInverse(face); left(face); downInverse(face); leftInverse(face); down(face);
+					left(face); down(face); leftInverse(face);
+				}
+				else {
+					printf("F - ");
+					left(face); downInverse(face); leftInverse(face); down(face);
+					down(face);
+					frontInverse(face); downInverse(face); front(face);
+				}
+			}
+			else if (edge_position == 2) {
+				if (edge_orientation == 0) {
+					printf("G - ");
+					left(face); down(face); leftInverse(face);
+				}
+				else {
+					printf("H - ");
+					down(face); frontInverse(face); down(face); down(face); front(face);
+					down(face); frontInverse(face); down(face); down(face); front(face);
+				}
+			}
+			else if (edge_position == 3) { //TODO: this can technically just be an if --- would only make it harder to read
+				if (edge_orientation == 0) {
+					printf("I - ");
+					downInverse(face); left(face); down(face); leftInverse(face); down(face);
+					left(face); down(face); leftInverse(face);
+				}
+				else {
+					printf("J - ");
+					down(face); frontInverse(face); downInverse(face); front(face);
+					down(face); frontInverse(face); down(face); down(face); front(face);
+				}
+			}
+			printf("KERPLUP\n");
+		}
+	}
+	if (corner_layer == 0) {
+		if (corner_orientation == 0) {
+			if (edge_position == 4) {
+				if (edge_orientation == 0) {
+					printf("A - ");
+					//MY WORK HERE IS DONE
+				}
+				else {
+					printf("B - ");
+					left(face); downInverse(face); leftInverse(face);
+					down(face);
+					frontInverse(face); down(face); down(face); front(face);
+					down(face); frontInverse(face); down(face); down(face); front(face); //TODO: do i reset the cube orientation for this line... idk man
+				}
+			}
+			else if (edge_position == 0) {
+				if (edge_orientation == 0) {
+					printf("C - ");
+					downInverse(); downInverse(); frontInverse(face); down(face); front(face);
+					down(face); left(face); downInverse(face); leftInverse(face);	
+				}
+				else {
+					printf("D - ");
+					down(face); left(face); downInverse(face); leftInverse(face);
+					downInverse(face); frontInverse(face); down(face); front(face);	
+				}
+			}
+			else if (edge_position == 1) {
+				if (edge_orientation == 0) {
+					printf("E - ");
+					downInverse(face); frontInverse(face); down(face); front(face);
+					down(face); left(face); downInverse(face); leftInverse(face);	
+				}
+				else {
+					printf("F - ");
+					left(face); downInverse(face); leftInverse(face);
+					downInverse(face); frontInverse(face); down(face); front(face);	
+				}
+			}
+			else if (edge_position == 2) {
+				if (edge_orientation == 0) {
+					printf("G - ");
+					frontInverse(face); down(face); front(face);
+					down(face); left(face); downInverse(face); leftInverse(face);	
+				}
+				else {
+					printf("H - ");
+					downInverse(face); left(face); downInverse(face); leftInverse(face);
+					downInverse(face); frontInverse(face); down(face); front(face);	
+				}
+			}
+			else if (edge_position == 3) { //TODO: this can technically just be an if --- would only make it harder to read
+				if (edge_orientation == 0) {
+					printf("I - ");
+					down(face); frontInverse(face); down(face); front(face);
+					down(face); left(face); downInverse(face); leftInverse(face);
+				}
+				else {
+					printf("J - ");
+					left(face); downInverse(face); leftInverse(face);
+					downInverse(face); frontInverse(face); down(face); front(face);	
+				}
+			}
+			printf("CRIKEY\n");
+		}
+		else if (corner_orientation == 1) {
+			if (edge_position == 4) {
+				if (edge_orientation == 0) {
+					printf("A - ");
+					left(face); downInverse(face); leftInverse(face);
+					down(face);
+					frontInverse(face); down(face); down(face); front(face);
+					down(face); frontInverse(face); down(face); down(face); front(face);
+				}
+				else {
+					printf("B - ");
+					left(face); down(face); leftInverse(face); downInverse(face); left(face); downInverse(face); leftInverse(face);
+					down(face);
+					down(face);
+					frontInverse(face); downInverse(face); front(face);
+				}
+			}
+			else if (edge_position == 0) {
+				if (edge_orientation == 0) {
+					printf("C - ");
+					downInverse(face);
+					left(face); down(face); leftInverse(face);
+					downInverse(face); left(face); down(face); leftInverse(face);
+				}
+				else {
+					printf("D - ");
+					frontInverse(face); down(face); front(face);
+					downInverse(face); frontInverse(face); down(face); front(face);
+				}
+			}
+			else if (edge_position == 1) {
+				if (edge_orientation == 0) {
+					printf("E - ");
+					left(face); down(face); leftInverse(face);
+					downInverse(face); left(face); down(face); leftInverse(face);
+				}
+				else {
+					printf("F - ");
+					down(face);
+					frontInverse(face); down(face); front(face);
+					downInverse(face); frontInverse(face); down(face); front(face);
+				}
+			}
+			else if (edge_position == 2) {
+				if (edge_orientation == 0) {
+					printf("G - ");
+					down(face);
+					left(face); down(face); leftInverse(face);
+					downInverse(face); left(face); down(face); leftInverse(face);
+				}
+				else {
+					printf("H - ");
+					down(face); down(face);
+					frontInverse(face); down(face); front(face);
+					downInverse(face); frontInverse(face); down(face); front(face);
+				}
+			}
+			else if (edge_position == 3) { //TODO: this can technically just be an if --- would only make it harder to read
+				if (edge_orientation == 0) {
+					printf("I - ");
+					down(face); down(face);
+					left(face); down(face); leftInverse(face);
+					downInverse(face); left(face); down(face); leftInverse(face);
+				}
+				else {
+					printf("J - ");
+					downInverse(face);
+					frontInverse(face); down(face); front(face);
+					downInverse(face); frontInverse(face); down(face); front(face);
+				}
+			}
+			printf("RUBY\n");
+		}
+		else if (corner_orientation == 2) {
+			if (edge_position == 4) {
+				if (edge_orientation == 0) {
+					printf("A - ");
+					left(face); downInverse(face); leftInverse(face); downInverse(face); left(face); down(face); leftInverse(face);
+					downInverse(face); left(face); down(face); down(face); leftInverse(face);
+				}
+				else {
+					printf("B - ");
+					left(face); downInverse(face); leftInverse(face);
+					down(face);
+					frontInverse(face); downInverse(face); front(face);
+					downInverse(face); frontInverse(face); downInverse(face); front(face);
+				}
+			}
+			else if (edge_position == 0) {
+				if (edge_orientation == 0) {
+					printf("C - ");
+					downInverse(face);
+					left(face); downInverse(face); leftInverse(face);
+					down(face); left(face); downInverse(face); leftInverse(face);
+				}
+				else {
+					printf("D - ");
+					frontInverse(face); downInverse(face); front(face);
+					down(face); frontInverse(face); downInverse(face); front(face);
+				}
+			}
+			else if (edge_position == 1) {
+				if (edge_orientation == 0) {
+					printf("E - ");
+					left(face); downInverse(face); leftInverse(face);
+					down(face); left(face); downInverse(face); leftInverse(face);
+				}
+				else {
+					printf("F - ");
+					down(face);
+					frontInverse(face); downInverse(face); front(face);
+					down(face); frontInverse(face); downInverse(face); front(face);
+				}
+			}
+			else if (edge_position == 2) {
+				if (edge_orientation == 0) {
+					printf("G - ");
+					down(face);
+					left(face); downInverse(face); leftInverse(face);
+					down(face); left(face); downInverse(face); leftInverse(face);
+				}
+				else {
+					printf("H - ");
+					down(face); down(face);
+					frontInverse(face); downInverse(face); front(face);
+					down(face); frontInverse(face); downInverse(face); front(face);
+				}
+			}
+			else if (edge_position == 3) { //TODO: this can technically just be an if --- would only make it harder to read
+				if (edge_orientation == 0) {
+					printf("I - ");
+					down(face); down(face);
+					left(face); downInverse(face); leftInverse(face);
+					down(face); left(face); downInverse(face); leftInverse(face);
+				}
+				else {
+					printf("J - ");
+					downInverse();
+					frontInverse(face); downInverse(face); front(face);
+					down(face); frontInverse(face); downInverse(face); front(face);
+				}
+			}
+			printf("DONNERZ\n");
+		}
+	}
+
+	/*
+	//TODO: update edge_position for the face
+	/*
+	f - WOG
+	l - WOB
+	b - WRB
+	r - WRG
+
+	if (corner[layer] == 0) {
+		check cubelet on the white face
+	}
+	else {
+		check cubelet on the yellow face
+	}
+
+	-	save the ornendation and layer of the corner
+
+	if (edge[layer] == 1) {
+		check the edge face against the face
+	}
+	else {
+		if (edge location == [0][2][1]) {
+			if (face = f) {
+				//
+			}
+			if (face = r) {
+				//
+			}
+			if (face = b) {
+				//
+			}
+			if (face = l) {
+				//
+			}
+		}
+		if (edge location == [1][2][0]) {
+			if (face = f) {
+				//
+			}
+			if (face = r) {
+				//
+			}
+			if (face = b) {
+				//
+			}
+			if (face = l) {
+				//
+			}
+		}
+		if (edge location == [1][2][2]) {
+			if (face = f) {
+				//
+			}
+			if (face = r) {
+				//
+			}
+			if (face = b) {
+				//
+			}
+			if (face = l) {
+				//
+			}
+		}
+		if (edge location == [2][2][1]) {
+			if (face = f) {
+				//
+			}
+			if (face = r) {
+				//
+			}
+			if (face = b) {
+				//
+			}
+			if (face = l) {
+				//
+			}
+		}
+
+		if (edge face on yellow == face) {
+			//
+		}
+		else {
+			//
+		}
+
+		do the lookup of algorithm
+		do algorithm for F2L(face)
+	}
+	*/
 }
 
 void setUpForF2L(Cubelet corner, Cubelet edge) {
@@ -428,9 +1086,9 @@ void printCube(int which) { //TODO print positions also
 }
 
 void front(Cubelet f) {
-	if (f == R) { right(G); }
-	if (f == B) { back(G); }
-	if (f == O) { left(G); }	
+	if (f == R) { right(G); return; }
+	if (f == B) { back(G); return; }
+	if (f == O) { left(G); return; }	
 
 	strcat(solution, "F");
 	solutionLen++;
@@ -445,9 +1103,9 @@ void front(Cubelet f) {
 	tmp = cF[2][5]; cF[2][5] = cF[3][2]; cF[3][2] = cF[6][3]; cF[6][3] = cF[5][6]; cF[5][6] = tmp; //Front Edge Corners Part 2 TODO 
 }
 void back(Cubelet f) {
-	if (f == R) { left(G); }
-	if (f == B) { front(G); }
-	if (f == O) { right(G); }	
+	if (f == R) { left(G); return; }
+	if (f == B) { front(G); return; }
+	if (f == O) { right(G); return; }	
 
 	strcat(solution, "B");
 	solutionLen++;
@@ -461,7 +1119,7 @@ void back(Cubelet f) {
 	tmp = cF[8][4]; cF[8][4] = cF[4][0]; cF[4][0] = cF[0][4]; cF[0][4] = cF[4][8]; cF[4][8] = tmp; //Back Edge Edges
 	tmp = cF[8][3]; cF[8][3] = cF[3][0]; cF[3][0] = cF[0][5]; cF[0][5] = cF[5][8]; cF[5][8] = tmp; //Back Edge Corners Part 2 TODO
 }
-void down() {
+void down(){
 	strcat(solution, "D");
 	solutionLen++;
 
@@ -488,9 +1146,9 @@ void up() {
 	tmp = cF[3][2]; cF[3][2] = cF[3][5]; cF[3][5] = cF[3][8]; cF[3][8] = cF[11][3]; cF[11][3] = tmp; //Up Edge Corners Part 2 TODO: Name this better (and the simmilar ones also)
 }
 void right(Cubelet f) {
-	if (f == R) { front(G); }
-	if (f == B) { right(G); }
-	if (f == O) { back(G); }		
+	if (f == R) { back(G); return; }
+	if (f == B) { left(G); return; }
+	if (f == O) { front(G); return; }
 
 	strcat(solution, "R");
 	solutionLen++;
@@ -505,9 +1163,9 @@ void right(Cubelet f) {
 	tmp = cF[2][5]; cF[2][5] = cF[5][5]; cF[5][5] = cF[8][5]; cF[8][5] = cF[11][5]; cF[11][5] = tmp; //Right Edge Corners Part 2 TODO
 }
 void left(Cubelet f) {
-	if (f == R) { back(G); }
-	if (f == B) { left(G); }
-	if (f == O) { front(G); }		
+	if (f == R) { front(G); return; }
+	if (f == B) { right(G); return; }
+	if (f == O) { back(G); return; }		
 
 	strcat(solution, "L");
 	solutionLen++;
