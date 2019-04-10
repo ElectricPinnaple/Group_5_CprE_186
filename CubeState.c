@@ -39,6 +39,7 @@ Cubelet cF[12][9] = { //Values of each of the cube faces
 			N, N, N, B, B, B, N, N, N,
 			N, N, N, B, B, B, N, N, N	};
 
+void orientLastLayer();
 void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge);
 void setUpForF2L(Cubelet corner, Cubelet edge);
 void firstTwoLayers();
@@ -82,7 +83,7 @@ int main(int argc, char* argv[]) {
 		leftInverse(G);
 		printCube(1);
 	}
-	if (1==2) {
+	if (1==1) {
 		int i;
 		srand(time(NULL));
 		for (i=0;i<20;i++) {
@@ -132,9 +133,10 @@ int main(int argc, char* argv[]) {
 	}
 
 	if (1==1) {
-		cubeInput(argv[1]);
+		//cubeInput(argv[1]);
 		whiteCross();
 		firstTwoLayers();
+		orientLastLayer();
 		printCube(1);
 		fixInverse();
 		printf("%s\n", solution);
@@ -147,6 +149,266 @@ int main(int argc, char* argv[]) {
 	//printf("O - %d\n", O);
 
 	return 0;
+}
+
+void orientLastLayer() {
+	int i;
+	for (i=0; i<4; i++) {
+		if    (cF[7][4] == Y && cF[9][4] == Y && cF[5][0] == Y && cF[5][1] == Y
+			&& cF[5][2] == Y && cF[5][4] == Y && cF[5][6] == Y && cF[5][7] == Y && cF[5][8] == Y) {
+			return;	
+		}
+		else if (cF[7][4] == Y && cF[9][4] == Y && cF[5][0] == Y && cF[5][1] == Y
+			  && cF[5][3] == Y && cF[5][4] == Y && cF[5][5] == Y && cF[5][7] == Y && cF[5][8] == Y) {
+			return;	
+		}
+		else if (cF[7][4] == Y && cF[6][3] == Y && cF[9][5] == Y && cF[9][4] == Y && cF[5][0] == Y && cF[5][1] == Y
+			  && cF[5][4] == Y && cF[5][6] == Y && cF[5][7] == Y) {
+			return;	
+		}
+		else if (cF[8][3] == Y && cF[7][4] == Y && cF[9][4] == Y && cF[5][1] == Y
+			  && cF[5][2] == Y && cF[5][4] == Y && cF[5][5] == Y && cF[5][7] == Y && cF[5][8] == Y) {
+			return;	
+		}
+		else if (cF[8][5] == Y && cF[7][4] == Y && cF[6][3] == Y && cF[9][4] == Y && cF[9][3] == Y && cF[5][1] == Y
+			  && cF[5][4] == Y && cF[5][6] == Y && cF[5][7] == Y) {
+			return;	
+		}
+		else if (cF[8][5] == Y && cF[8][3] == Y && cF[7][4] == Y && cF[6][5] == Y
+			  && cF[6][3] == Y && cF[9][4] == Y && cF[5][1] == Y
+			  && cF[5][4] == Y && cF[5][7] == Y) {
+			return;	
+		}
+		else if (cF[8][5] == Y && cF[8][3] == Y && cF[7][4] == Y && cF[9][4] == Y && cF[5][1] == Y
+			  && cF[5][2] == Y && cF[5][4] == Y && cF[5][6] == Y && cF[5][7] == Y) {
+			return;	
+		}
+		else if (cF[7][4] == Y && cF[6][5] == Y
+			  && cF[6][3] == Y && cF[9][5] == Y && cF[9][4] == Y && cF[9][3] == Y && cF[5][1] == Y
+			  && cF[5][4] == Y && cF[5][7] == Y) {
+			return;	
+		}
+		else if (cF[8][4] == Y && cF[7][4] == Y && cF[6][4] == Y && cF[9][5] == Y && cF[5][0] == Y && cF[5][1] == Y
+			  && cF[5][2] == Y && cF[5][5] == Y && cF[5][7] == Y) {
+			return;	
+		}
+		else if (cF[8][4] == Y && cF[7][4] == Y && cF[6][4] == Y && cF[5][0] == Y && cF[5][1] == Y
+			  && cF[5][2] == Y && cF[5][6] == Y && cF[5][7] == Y && cF[5][8] == Y) {
+			return;	
+		} 
+		else if (cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[9][5] == Y && cF[9][4] == Y && cF[5][0] == Y
+			  && cF[5][2] == Y && cF[5][4] == Y && cF[5][5] == Y) {
+			return;	
+		}
+		else if (cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[9][4] == Y && cF[5][0] == Y
+			  && cF[5][2] == Y && cF[5][4] == Y && cF[5][6] == Y && cF[5][8] == Y) {
+			return;	
+		}
+		else if (cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
+			  && cF[6][4] == Y && cF[9][5] == Y && cF[5][0] == Y
+			  && cF[5][2] == Y && cF[5][5] == Y) {
+			return;	
+		}
+		else if (cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
+			  && cF[6][4] == Y && cF[5][0] == Y
+			  && cF[5][2] == Y && cF[5][6] == Y && cF[5][8] == Y) {
+			return;	
+		}
+		else if (cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
+			  && cF[6][4] == Y && cF[6][3] == Y && cF[9][3] == Y && cF[5][5] == Y  && cF[5][8] == Y) {
+			return;	
+		}
+		else if (cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
+			  && cF[6][4] == Y && cF[6][3] == Y && cF[9][5] == Y && cF[5][0] == Y && cF[5][6] == Y) {
+			return;	
+		}
+		else if (cF[8][5] == Y && cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y //17
+			  && cF[6][4] == Y && cF[9][3] == Y && cF[5][3] == Y) {
+			return;	
+		}
+		else if (cF[8][5] == Y && cF[8][4] == Y && cF[8][3] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
+			  && cF[6][4] == Y && cF[5][3] == Y && cF[5][5] == Y) {
+			return;	
+		}
+		else if (cF[8][5] == Y && cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
+			  && cF[6][4] == Y && cF[6][3] == Y && cF[9][3] == Y && cF[5][6] == Y) {
+			return;	
+		}
+		else if (cF[8][5] == Y && cF[8][3] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[6][5] == Y //20
+			  && cF[6][4] == Y && cF[6][3] == Y && cF[9][4] == Y && cF[5][1] == Y) {
+			return;	
+		}
+		else if (cF[8][5] == Y && cF[8][3] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y
+			  && cF[6][3] == Y && cF[9][4] == Y && cF[5][4] == Y) {
+			return;	
+		}
+		else if (cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[6][5] == Y
+			  && cF[9][5] == Y && cF[5][0] == Y && cF[5][1] == Y
+			  && cF[5][3] == Y && cF[5][4] == Y) {
+			return;	
+		}
+		else if (cF[8][5] == Y && cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[6][3] == Y && cF[5][0] == Y && cF[5][1] == Y
+			  && cF[5][4] == Y && cF[5][5] == Y) {
+			return;	
+		}
+		else if (cF[8][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][4] == Y && cF[5][2] == Y && cF[5][5] == Y
+			  && cF[5][7] == Y && cF[9][3] == Y && cF[9][4] == Y) {
+			return;	
+		}
+		else if (cF[8][5] == Y && cF[8][3] == Y && cF[7][4] == Y && cF[7][3] == Y
+			  && cF[6][4] == Y && cF[9][4] == Y && cF[5][5] == Y && cF[5][3] == Y
+			  && cF[5][7] == Y) {
+			return;	
+		}
+		else if (cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[9][3] == Y && cF[5][1] == Y
+			  && cF[5][3] == Y && cF[5][4] == Y && cF[5][6] == Y && cF[5][8] == Y) {
+			return;	
+		}
+		else if (cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[9][5] == Y && cF[9][3] == Y && cF[5][1] == Y
+			  && cF[5][3] == Y && cF[5][4] == Y && cF[5][5] == Y) {
+			return;	
+		}
+		else if (cF[8][4] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y
+			  && cF[6][3] == Y && cF[9][5] == Y && cF[9][3] == Y && cF[5][4] == Y && cF[5][7] == Y) {
+			return;	
+		}
+		else if (cF[8][4] == Y && cF[8][3] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[5][2] == Y 
+			  && cF[5][4] == Y && cF[5][5] == Y && cF[5][7] == Y && cF[5][8] == Y) {
+			return;	
+		}
+		else if (cF[8][4] == Y && cF[8][3] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y //30
+			  && cF[9][5] == Y && cF[5][2] == Y && cF[5][4] == Y && cF[5][7] == Y) {
+			return;	
+		}
+		else if (cF[8][4] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[9][5] == Y && cF[5][0] == Y
+			  && cF[5][2] == Y && cF[5][4] == Y && cF[5][5] == Y && cF[5][7] == Y) {
+			return;	
+		}
+		else if (cF[8][4] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[9][3] == Y
+			  && cF[5][3] == Y && cF[5][4] == Y && cF[5][6] == Y && cF[5][7] == Y && cF[5][8] == Y) {
+			return;	
+		}
+		else if (cF[8][4] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[9][5] == Y && cF[9][3] == Y
+			  && cF[5][3] == Y && cF[5][4] == Y && cF[5][5] == Y && cF[5][7] == Y) {
+			return;	
+		}
+		else if (cF[8][3] == Y && cF[7][5] == Y && cF[7][4] == Y
+			  && cF[6][4] == Y && cF[9][5] == Y && cF[9][4] == Y && cF[5][1] == Y
+			  && cF[5][3] == Y && cF[5][6] == Y) {
+			return;	
+		}
+		else if (cF[8][5] == Y && cF[7][5] == Y && cF[7][4] == Y
+			  && cF[6][4] == Y && cF[9][4] == Y && cF[9][3] == Y && cF[5][1] == Y
+			  && cF[5][2] == Y && cF[5][5] == Y) {
+			return;	
+		}
+		else if (cF[7][5] == Y && cF[7][4] == Y && cF[6][4] == Y && cF[6][3] == Y && cF[9][4] == Y && cF[9][3] == Y && cF[5][1] == Y
+			  && cF[5][5] == Y && cF[5][8] == Y) {
+			return;	
+		}
+		else if (cF[8][5] == Y && cF[8][3] == Y && cF[7][5] == Y && cF[7][4] == Y
+			  && cF[6][4] == Y && cF[9][4] == Y && cF[5][1] == Y
+			  && cF[5][2] == Y && cF[5][6] == Y) {
+			return;	
+		}
+		else if (cF[7][4] == Y && cF[7][3] == Y && cF[6][4] == Y && cF[9][4] == Y && cF[9][3] == Y
+			  && cF[5][3] == Y && cF[5][6] == Y && cF[5][7] == Y && cF[5][8] == Y) {
+			return;	
+		}
+		else if (cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y
+			  && cF[6][4] == Y && cF[9][5] == Y && cF[9][4] == Y
+			  && cF[5][0] == Y && cF[5][3] == Y && cF[5][7] == Y) {
+			return;	
+		}
+		else if (cF[8][5] == Y && cF[8][3] == Y && cF[7][4] == Y && cF[7][3] == Y //40
+			  && cF[6][4] == Y && cF[9][4] == Y
+			  && cF[5][2] == Y && cF[5][6] == Y && cF[5][7] == Y) {
+			return;	
+		}
+		else if (cF[7][4] == Y && cF[7][3] == Y
+			  && cF[6][4] == Y && cF[6][3] == Y && cF[9][5] == Y && cF[9][4] == Y && cF[5][0] == Y
+			  && cF[5][6] == Y && cF[5][7] == Y) {
+			return;	
+		}
+		else if (cF[8][5] == Y && cF[8][4] == Y && cF[7][4] == Y && cF[6][5] == Y
+			  && cF[6][4] == Y && cF[5][0] == Y && cF[5][1] == Y
+			  && cF[5][2] == Y && cF[5][7] == Y) {
+			return;	
+		}
+		else if (cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y
+			  && cF[6][3] == Y && cF[9][4] == Y && cF[5][0] == Y
+			  && cF[5][4] == Y && cF[5][8] == Y) {
+			return;	
+		}
+		else if (cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
+			  && cF[6][3] == Y && cF[9][4] == Y && cF[9][3] == Y
+			  && cF[5][4] == Y && cF[5][5] == Y && cF[5][8] == Y) {
+			return;	
+		}
+		else if (cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y
+			  && cF[9][5] == Y && cF[9][4] == Y && cF[5][0] == Y
+			  && cF[5][3] == Y && cF[5][4] == Y) {
+			return;	
+		}
+		else if (cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
+			  && cF[6][3] == Y && cF[9][5] == Y && cF[9][4] == Y && cF[5][0] == Y
+			  && cF[5][4] == Y && cF[5][6] == Y) {
+			return;	
+		}
+		else if (cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[8][3] == Y
+			  && cF[9][4] == Y && cF[5][5] == Y
+			  && cF[5][2] == Y && cF[5][4] == Y && cF[5][8] == Y) {
+			return;	
+		}
+		else if (cF[8][5] == Y && cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[6][5] == Y
+			  && cF[5][0] == Y && cF[5][1] == Y
+			  && cF[5][2] == Y && cF[5][4] == Y) {
+			return;	
+		}
+		else if (cF[8][4] == Y && cF[8][3] == Y && cF[7][4] == Y && cF[7][3] == Y
+			  && cF[6][3] == Y && cF[9][5] == Y && cF[5][4] == Y && cF[5][5] == Y && cF[5][7] == Y) {
+			return;	
+		}
+		else if (cF[8][5] == Y && cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[6][5] == Y
+			  && cF[9][3] == Y && cF[5][1] == Y
+			  && cF[5][3] == Y && cF[5][4] == Y) {
+			return;	
+		}
+		else if (cF[8][4] == Y && cF[8][3] == Y && cF[7][4] == Y && cF[7][3] == Y
+			  && cF[6][3] == Y && cF[5][4] == Y && cF[5][6] == Y && cF[5][7] == Y && cF[5][8] == Y) {
+			return;	
+		}
+		else if (cF[8][3] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
+			  && cF[6][3] == Y && cF[9][4] == Y && cF[5][4] == Y && cF[5][6] == Y && cF[5][8] == Y) {
+			return;	
+		}
+		else if (cF[8][3] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
+			  && cF[6][3] == Y && cF[9][5] == Y && cF[9][4] == Y && cF[5][4] == Y && cF[5][5] == Y) {
+			return;	
+		}
+		else if (cF[8][3] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y
+			  && cF[6][4] == Y && cF[9][4] == Y && cF[5][3] == Y && cF[5][7] == Y && cF[5][8] == Y) {
+			return;	
+		}
+		else if (cF[8][5] == Y && cF[7][5] == Y && cF[7][4] == Y
+			  && cF[6][4] == Y && cF[6][3] == Y && cF[9][4] == Y && cF[5][0] == Y && cF[5][1] == Y
+			  && cF[5][5] == Y) {
+			return;	
+		}
+		else if (cF[8][5] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
+			  && cF[6][3] == Y && cF[9][4] == Y && cF[9][3] == Y
+			  && cF[5][4] == Y && cF[5][6] == Y) {
+			return;	
+		}
+		else if (cF[8][3] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y
+			  && cF[9][5] == Y && cF[9][4] == Y && cF[5][2] == Y && cF[5][4] == Y) {
+			return;	
+		}
+		else {
+		}
+		down();
+	}
+	printf("YOU DIDN'T FIND A CORRECT F2L, YA DWEEB!\n");
 }
 
 int inputToFaces(char c) {
