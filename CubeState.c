@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
 		leftInverse(G);
 		printCube(1);
 	}
-	if (1==1) {
+	if (1==2) {
 		int i;
 		srand(time(NULL));
 		for (i=0;i<20;i++) {
@@ -133,9 +133,10 @@ int main(int argc, char* argv[]) {
 	}
 
 	if (1==1) {
-		//cubeInput(argv[1]);
+		cubeInput(argv[1]);
 		whiteCross();
 		firstTwoLayers();
+		//printCube(1);
 		orientLastLayer();
 		printCube(1);
 		fixInverse();
@@ -156,252 +157,366 @@ void orientLastLayer() {
 	for (i=0; i<4; i++) {
 		if    (cF[7][4] == Y && cF[9][4] == Y && cF[5][0] == Y && cF[5][1] == Y
 			&& cF[5][2] == Y && cF[5][4] == Y && cF[5][6] == Y && cF[5][7] == Y && cF[5][8] == Y) {
+			printf("AA\n");
+			left(G); down(G); backInverse(G); left(G); back(G); leftInverse(G); leftInverse(G); downInverse(G); leftInverse(G); front(G); left(G); frontInverse(G);
 			return;	
 		}
 		else if (cF[7][4] == Y && cF[9][4] == Y && cF[5][0] == Y && cF[5][1] == Y
 			  && cF[5][3] == Y && cF[5][4] == Y && cF[5][5] == Y && cF[5][7] == Y && cF[5][8] == Y) {
+			printf("BB\n");
+			leftInverse(G); front(G); left(G); frontInverse(G); down(G); down(G); leftInverse(G); front(G); left(G); front(G); front(G); down(G); down(G); front(G);
 			return;	
 		}
 		else if (cF[7][4] == Y && cF[6][3] == Y && cF[9][5] == Y && cF[9][4] == Y && cF[5][0] == Y && cF[5][1] == Y
 			  && cF[5][4] == Y && cF[5][6] == Y && cF[5][7] == Y) {
+			printf("CC\n");
+			frontInverse(G); back(G); back(G); right(G); backInverse(G); right(G); front(G); down(G); down(G); frontInverse(G); right(G); front(G); backInverse(G);
 			return;	
 		}
 		else if (cF[8][3] == Y && cF[7][4] == Y && cF[9][4] == Y && cF[5][1] == Y
 			  && cF[5][2] == Y && cF[5][4] == Y && cF[5][5] == Y && cF[5][7] == Y && cF[5][8] == Y) {
+			printf("DD\n");
+			leftInverse(G); down(G); down(G); leftInverse(G); front(G); left(G); frontInverse(G); downInverse(G); frontInverse(G); downInverse(G); front(G); downInverse(G); left(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[7][4] == Y && cF[6][3] == Y && cF[9][4] == Y && cF[9][3] == Y && cF[5][1] == Y
 			  && cF[5][4] == Y && cF[5][6] == Y && cF[5][7] == Y) {
+			printf("EE\n");
+			left(G); down(G); leftInverse(G); down(G); leftInverse(G); front(G); left(G); frontInverse(G); down(G); down(G); leftInverse(G); front(G); left(G); frontInverse(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][3] == Y && cF[7][4] == Y && cF[6][5] == Y
 			  && cF[6][3] == Y && cF[9][4] == Y && cF[5][1] == Y
 			  && cF[5][4] == Y && cF[5][7] == Y) {
+			printf("FF\n");
+			right(G); leftInverse(G); front(G); front(G); rightInverse(G); left(G); down(G); down(G); right(G); leftInverse(G); front(G); rightInverse(G); left(G); down(G); down(G); right(G); leftInverse(G); front(G); front(G); rightInverse(G); left(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][3] == Y && cF[7][4] == Y && cF[9][4] == Y && cF[5][1] == Y
 			  && cF[5][2] == Y && cF[5][4] == Y && cF[5][6] == Y && cF[5][7] == Y) {
+			printf("GG\n");
+			leftInverse(G); down(G); down(G); front(G); left(G); down(G); leftInverse(G); downInverse(G); front(G); front(G); down(G); down(G); front(G); left(G);
 			return;	
 		}
 		else if (cF[7][4] == Y && cF[6][5] == Y
 			  && cF[6][3] == Y && cF[9][5] == Y && cF[9][4] == Y && cF[9][3] == Y && cF[5][1] == Y
 			  && cF[5][4] == Y && cF[5][7] == Y) {
+			printf("HH\n");
+			front(G); left(G); down(G); leftInverse(G); down(G); frontInverse(G); down(G); down(G); frontInverse(G); right(G); front(G); rightInverse(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[7][4] == Y && cF[6][4] == Y && cF[9][5] == Y && cF[5][0] == Y && cF[5][1] == Y
 			  && cF[5][2] == Y && cF[5][5] == Y && cF[5][7] == Y) {
+			printf("II\n");
+			leftInverse(G); downInverse(G); frontInverse(G); down(G); frontInverse(G); right(G); front(G); rightInverse(G); front(G); left(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[7][4] == Y && cF[6][4] == Y && cF[5][0] == Y && cF[5][1] == Y
 			  && cF[5][2] == Y && cF[5][6] == Y && cF[5][7] == Y && cF[5][8] == Y) {
+			printf("JJ\n");
+			left(G); downInverse(G); back(G); back(G); up(G); backInverse(G); down(G); down(G); back(G); upInverse(G); back(G); back(G); down(G); leftInverse(G);
 			return;	
 		} 
 		else if (cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[9][5] == Y && cF[9][4] == Y && cF[5][0] == Y
 			  && cF[5][2] == Y && cF[5][4] == Y && cF[5][5] == Y) {
-			return;	
+			printf("KK\n");
+			front(G); down(G); left(G); downInverse(G); leftInverse(G); down(G); left(G); downInverse(G); leftInverse(G); frontInverse(G);
+			return;	//11
 		}
 		else if (cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[9][4] == Y && cF[5][0] == Y
 			  && cF[5][2] == Y && cF[5][4] == Y && cF[5][6] == Y && cF[5][8] == Y) {
+			printf("LL\n");
+			rightInverse(G); backInverse(G); right(G); downInverse(G); leftInverse(G); down(G); left(G); downInverse(G); leftInverse(G); down(G); left(G); rightInverse(G); back(G); right(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][4] == Y && cF[9][5] == Y && cF[5][0] == Y
 			  && cF[5][2] == Y && cF[5][5] == Y) {
+			printf("MM\n");
+			right(G); downInverse(G); leftInverse(G); down(G); rightInverse(G); down(G); left(G); down(G); leftInverse(G); down(G); left(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][4] == Y && cF[5][0] == Y
 			  && cF[5][2] == Y && cF[5][6] == Y && cF[5][8] == Y) {
+			printf("NN\n");
+			left(G); down(G); leftInverse(G); down(G); left(G); downInverse(G); leftInverse(G); down(G); left(G); down(G); down(G); leftInverse(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][4] == Y && cF[6][3] == Y && cF[9][3] == Y && cF[5][5] == Y  && cF[5][8] == Y) {
+			printf("OO\n");
+			rightInverse(G); down(G); left(G); downInverse(G); right(G); down(G); leftInverse(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][4] == Y && cF[6][3] == Y && cF[9][5] == Y && cF[5][0] == Y && cF[5][6] == Y) {
+			printf("PP\n");
+			leftInverse(G); down(G); down(G); left(G); down(G); leftInverse(G); down(G); left(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y //17
 			  && cF[6][4] == Y && cF[9][3] == Y && cF[5][3] == Y) {
+			printf("QQ\n");
+			leftInverse(G); frontInverse(G); right(G); front(G); left(G); frontInverse(G); rightInverse(G); front(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][4] == Y && cF[8][3] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][4] == Y && cF[5][3] == Y && cF[5][5] == Y) {
+			printf("RR\n");
+			left(G); left(G); up(G); leftInverse(G); down(G); down(G); left(G); upInverse(G); leftInverse(G); down(G); down(G); leftInverse(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][4] == Y && cF[6][3] == Y && cF[9][3] == Y && cF[5][6] == Y) {
+			printf("SS\n");
+			leftInverse(G); frontInverse(G); rightInverse(G); front(G); left(G); frontInverse(G); right(G); front(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][3] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[6][5] == Y //20
 			  && cF[6][4] == Y && cF[6][3] == Y && cF[9][4] == Y && cF[5][1] == Y) {
+			printf("TT\n");
+			leftInverse(G); right(G); frontInverse(G); left(G); rightInverse(G); down(G); down(G); leftInverse(G); right(G); frontInverse(G); left(G); rightInverse(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][3] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y
 			  && cF[6][3] == Y && cF[9][4] == Y && cF[5][4] == Y) {
+			printf("UU\n");
+			rightInverse(G); left(G); down(G); leftInverse(G); downInverse(G); right(G); leftInverse(G); front(G); left(G); frontInverse(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[6][5] == Y
 			  && cF[9][5] == Y && cF[5][0] == Y && cF[5][1] == Y
 			  && cF[5][3] == Y && cF[5][4] == Y) {
+			printf("VV\n");
+			right(G); front(G); leftInverse(G); front(G); left(G); front(G); front(G); rightInverse(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[6][3] == Y && cF[5][0] == Y && cF[5][1] == Y
 			  && cF[5][4] == Y && cF[5][5] == Y) {
+			printf("WW\n");
+			front(G); leftInverse(G); frontInverse(G); left(G); down(G); left(G); downInverse(G); leftInverse(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][4] == Y && cF[5][2] == Y && cF[5][5] == Y
 			  && cF[5][7] == Y && cF[9][3] == Y && cF[9][4] == Y) {
+			printf("XX\n");
+			leftInverse(G); downInverse(G); left(G); front(G); rightInverse(G); frontInverse(G); up(G); front(G); right(G); frontInverse(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][3] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][4] == Y && cF[9][4] == Y && cF[5][5] == Y && cF[5][3] == Y
 			  && cF[5][7] == Y) {
+			printf("YY\n");
+			downInverse(G); left(G); down(G); down(G); leftInverse(G); downInverse(G); left(G); downInverse(G); left(G); left(G); frontInverse(G); downInverse(G); front(G); down(G); left(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[9][3] == Y && cF[5][1] == Y
 			  && cF[5][3] == Y && cF[5][4] == Y && cF[5][6] == Y && cF[5][8] == Y) {
+			printf("ZZ\n");
+			front(G); left(G); down(G); leftInverse(G); downInverse(G); left(G); down(G); leftInverse(G); downInverse(G); frontInverse(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[9][5] == Y && cF[9][3] == Y && cF[5][1] == Y
 			  && cF[5][3] == Y && cF[5][4] == Y && cF[5][5] == Y) {
+			printf("aa\n");
+			right(G); frontInverse(G); rightInverse(G); front(G); down(G); down(G); right(G); right(G); back(G); right(G); backInverse(G); right(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y
 			  && cF[6][3] == Y && cF[9][5] == Y && cF[9][3] == Y && cF[5][4] == Y && cF[5][7] == Y) {
+			printf("bb\n");
+			downInverse(G); leftInverse(G); down(G); down(G); left(G); down(G); leftInverse(G); down(G); left(G); left(G); back(G); down(G); backInverse(G); downInverse(G); leftInverse(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[8][3] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[5][2] == Y 
 			  && cF[5][4] == Y && cF[5][5] == Y && cF[5][7] == Y && cF[5][8] == Y) {
+			printf("cc\n");
+			right(G); front(G); front(G); leftInverse(G); frontInverse(G); left(G); frontInverse(G); rightInverse(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[8][3] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y //30
 			  && cF[9][5] == Y && cF[5][2] == Y && cF[5][4] == Y && cF[5][7] == Y) {
+			printf("dd\n");
+			frontInverse(G); rightInverse(G); downInverse(G); right(G); down(G); rightInverse(G); downInverse(G); right(G); down(G); front(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[9][5] == Y && cF[5][0] == Y
 			  && cF[5][2] == Y && cF[5][4] == Y && cF[5][5] == Y && cF[5][7] == Y) {
+			printf("ee\n");
+			leftInverse(G); down(G); down(G); left(G); left(G); backInverse(G); leftInverse(G); back(G); leftInverse(G); down(G); down(G); left(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[9][3] == Y
 			  && cF[5][3] == Y && cF[5][4] == Y && cF[5][6] == Y && cF[5][7] == Y && cF[5][8] == Y) {
+			printf("ff\n");
+			leftInverse(G); front(G); left(G); frontInverse(G); down(G); down(G); left(G); left(G); backInverse(G); leftInverse(G); back(G); leftInverse(G);
 			return;	
 		}
-		else if (cF[8][4] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[9][5] == Y && cF[9][3] == Y
+		else if (cF[8][4] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[9][5] == Y && cF[9][3] == Y //Possible misordering or things... just watch it
 			  && cF[5][3] == Y && cF[5][4] == Y && cF[5][5] == Y && cF[5][7] == Y) {
+			printf("gg\n");
+			leftInverse(G); front(G); leftInverse(G); frontInverse(G); left(G); left(G); down(G); down(G); backInverse(G); left(G); back(G); leftInverse(G);
 			return;	
 		}
 		else if (cF[8][3] == Y && cF[7][5] == Y && cF[7][4] == Y
 			  && cF[6][4] == Y && cF[9][5] == Y && cF[9][4] == Y && cF[5][1] == Y
 			  && cF[5][3] == Y && cF[5][6] == Y) {
+			printf("hh\n");
+			left(G); down(G); leftInverse(G); backInverse(G); left(G); back(G); downInverse(G); backInverse(G); leftInverse(G); back(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[7][5] == Y && cF[7][4] == Y
 			  && cF[6][4] == Y && cF[9][4] == Y && cF[9][3] == Y && cF[5][1] == Y
 			  && cF[5][2] == Y && cF[5][5] == Y) {
+			printf("ii\n");
+			rightInverse(G); backInverse(G); right(G); downInverse(G); leftInverse(G); down(G); left(G); rightInverse(G); back(G); right(G);
 			return;	
 		}
 		else if (cF[7][5] == Y && cF[7][4] == Y && cF[6][4] == Y && cF[6][3] == Y && cF[9][4] == Y && cF[9][3] == Y && cF[5][1] == Y
 			  && cF[5][5] == Y && cF[5][8] == Y) {
+			printf("jj\n");
+			down(G); down(G); right(G); leftInverse(G); leftInverse(G); frontInverse(G); left(G); frontInverse(G); leftInverse(G); front(G); front(G); left(G); frontInverse(G); right(G); leftInverse(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][3] == Y && cF[7][5] == Y && cF[7][4] == Y
 			  && cF[6][4] == Y && cF[9][4] == Y && cF[5][1] == Y
 			  && cF[5][2] == Y && cF[5][6] == Y) {
+			printf("kk\n");
+			backInverse(G); left(G); backInverse(G); left(G); left(G); down(G); left(G); down(G); leftInverse(G); downInverse(G); left(G); back(G); back(G);
 			return;	
 		}
 		else if (cF[7][4] == Y && cF[7][3] == Y && cF[6][4] == Y && cF[9][4] == Y && cF[9][3] == Y
 			  && cF[5][3] == Y && cF[5][6] == Y && cF[5][7] == Y && cF[5][8] == Y) {
+			printf("ll\n");
+			right(G); downInverse(G); frontInverse(G); down(G); down(G); frontInverse(G); down(G); front(G); downInverse(G); front(G); down(G); down(G); front(G); downInverse(G); rightInverse(G);
 			return;	
 		}
 		else if (cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y
 			  && cF[6][4] == Y && cF[9][5] == Y && cF[9][4] == Y
 			  && cF[5][0] == Y && cF[5][3] == Y && cF[5][7] == Y) {
+			printf("mm\n");
+			down(G); down(G); leftInverse(G); right(G); right(G); front(G); rightInverse(G); front(G); right(G); front(G); front(G); rightInverse(G); front(G); left(G); rightInverse(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][3] == Y && cF[7][4] == Y && cF[7][3] == Y //40
 			  && cF[6][4] == Y && cF[9][4] == Y
 			  && cF[5][2] == Y && cF[5][6] == Y && cF[5][7] == Y) {
+			printf("nnn\n");
+			rightInverse(G); back(G); back(G); left(G); back(G); leftInverse(G); back(G); right(G);
 			return;	
 		}
 		else if (cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][4] == Y && cF[6][3] == Y && cF[9][5] == Y && cF[9][4] == Y && cF[5][0] == Y
 			  && cF[5][6] == Y && cF[5][7] == Y) {
+			printf("oo\n");
+			left(G); left(G); down(G); leftInverse(G); backInverse(G); left(G); downInverse(G); left(G); left(G); down(G); left(G); front(G); leftInverse(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][4] == Y && cF[7][4] == Y && cF[6][5] == Y
 			  && cF[6][4] == Y && cF[5][0] == Y && cF[5][1] == Y
 			  && cF[5][2] == Y && cF[5][7] == Y) {
+			printf("pp\n");
+			left(G); down(G); left(G); backInverse(G); leftInverse(G); back(G); downInverse(G); leftInverse(G);
 			return;	
 		}
 		else if (cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y
 			  && cF[6][3] == Y && cF[9][4] == Y && cF[5][0] == Y
 			  && cF[5][4] == Y && cF[5][8] == Y) {
+			printf("qq\n");
+			left(G); down(G); leftInverse(G); downInverse(G); backInverse(G); leftInverse(G); front(G); left(G); frontInverse(G); back(G);
 			return;	
 		}
 		else if (cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][3] == Y && cF[9][4] == Y && cF[9][3] == Y
 			  && cF[5][4] == Y && cF[5][5] == Y && cF[5][8] == Y) {
+			printf("rr\n");
+			leftInverse(G); front(G); left(G); down(G); leftInverse(G); frontInverse(G); left(G); front(G); downInverse(G); frontInverse(G);
 			return;	
 		}
 		else if (cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y
 			  && cF[9][5] == Y && cF[9][4] == Y && cF[5][0] == Y
 			  && cF[5][3] == Y && cF[5][4] == Y) {
+			printf("ss\n");
+			right(G); frontInverse(G); rightInverse(G); downInverse(G); right(G); front(G); rightInverse(G); frontInverse(G); down(G); front(G);
 			return;	
 		}
 		else if (cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][3] == Y && cF[9][5] == Y && cF[9][4] == Y && cF[5][0] == Y
 			  && cF[5][4] == Y && cF[5][6] == Y) {
+			printf("tt\n");
+			rightInverse(G); backInverse(G); right(G); leftInverse(G); downInverse(G); left(G); down(G); rightInverse(G); back(G); right(G);
 			return;	
 		}
 		else if (cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[8][3] == Y
 			  && cF[9][4] == Y && cF[5][5] == Y
 			  && cF[5][2] == Y && cF[5][4] == Y && cF[5][8] == Y) {
+			printf("uu\n");
+			left(G); back(G); leftInverse(G); right(G); down(G); rightInverse(G); downInverse(G); left(G); backInverse(G); rightInverse(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[6][5] == Y
 			  && cF[5][0] == Y && cF[5][1] == Y
 			  && cF[5][2] == Y && cF[5][4] == Y) {
+			printf("vv\n");
+			front(G); down(G); left(G); downInverse(G); leftInverse(G); frontInverse(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[8][3] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][3] == Y && cF[9][5] == Y && cF[5][4] == Y && cF[5][5] == Y && cF[5][7] == Y) {
+			printf("ww\n");
+			leftInverse(G); downInverse(G); front(G); down(G); left(G); downInverse(G); leftInverse(G); frontInverse(G); left(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[6][5] == Y
 			  && cF[9][3] == Y && cF[5][1] == Y
 			  && cF[5][3] == Y && cF[5][4] == Y) {
+			printf("xx\n");
+			right(G); down(G); frontInverse(G); downInverse(G); rightInverse(G); down(G); right(G); front(G); rightInverse(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[8][3] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][3] == Y && cF[5][4] == Y && cF[5][6] == Y && cF[5][7] == Y && cF[5][8] == Y) {
+			printf("yy\n");
+			frontInverse(G); downInverse(G); rightInverse(G); down(G); right(G); front(G);
 			return;	
 		}
 		else if (cF[8][3] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][3] == Y && cF[9][4] == Y && cF[5][4] == Y && cF[5][6] == Y && cF[5][8] == Y) {
+			printf("zz\n");
+			front(G); left(G); down(G); leftInverse(G); downInverse(G); frontInverse(G);
 			return;	
 		}
 		else if (cF[8][3] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][3] == Y && cF[9][5] == Y && cF[9][4] == Y && cF[5][4] == Y && cF[5][5] == Y) {
+			printf("11\n");
+			left(G); down(G); leftInverse(G); downInverse(G); leftInverse(G); front(G); left(G); frontInverse(G);
 			return;	
 		}
 		else if (cF[8][3] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y
 			  && cF[6][4] == Y && cF[9][4] == Y && cF[5][3] == Y && cF[5][7] == Y && cF[5][8] == Y) {
+			printf("22\n");
+			right(G); down(G); rightInverse(G); down(G); right(G); downInverse(G); rightInverse(G); downInverse(G); rightInverse(G); back(G); right(G); backInverse(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[7][5] == Y && cF[7][4] == Y
 			  && cF[6][4] == Y && cF[6][3] == Y && cF[9][4] == Y && cF[5][0] == Y && cF[5][1] == Y
 			  && cF[5][5] == Y) {
+			printf("33\n");
+			leftInverse(G); downInverse(G); left(G); downInverse(G); leftInverse(G); down(G); left(G); down(G); left(G); backInverse(G); leftInverse(G); back(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][3] == Y && cF[9][4] == Y && cF[9][3] == Y
 			  && cF[5][4] == Y && cF[5][6] == Y) {
+			printf("44\n");
+			leftInverse(G); front(G); left(G); down(G); leftInverse(G); downInverse(G); frontInverse(G); down(G); left(G);
 			return;	
 		}
 		else if (cF[8][3] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y
 			  && cF[9][5] == Y && cF[9][4] == Y && cF[5][2] == Y && cF[5][4] == Y) {
+			printf("55\n");
+			right(G); frontInverse(G); rightInverse(G); downInverse(G); right(G); down(G); front(G); downInverse(G); rightInverse(G);
 			return;	
 		}
 		else {
