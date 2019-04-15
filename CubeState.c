@@ -142,14 +142,136 @@ int main(int argc, char* argv[]) {
 		fixInverse();
 		printf("%s\n", solution);
 	}
-	//printf("W - %d\n", W);
-	//printf("Y - %d\n", Y);
-	//printf("B - %d\n", B);
-	//printf("G - %d\n", G);
-	//printf("R - %d\n", R);
-	//printf("O - %d\n", O);
 
 	return 0;
+}
+
+void permutateLastLayer() { //TODO: this whole thing can drop checking the center cubelet, but I mean, it does not have to
+	Cubelet locations[4][3][3] = { //Correct Positions for the Cubes on each rotation
+			{ { YRB,  YB, YOB }, //ONE
+			  {  YR,   Y,  YO },
+			  { YRG,  YG, YOG }
+			}, {
+			  {  WO,   W,  WR }, //TWO
+			  {   O,   N,   R },
+			  {  YO,   Y,  YR }
+			}, {
+			  {  WO,   W,  WR }, //THREE
+			  {   O,   N,   R },
+			  {  YO,   Y,  YR }
+			}, {
+			  { WOG,  WG, WRG }, //FOUR
+			  {  OG,   G,  RG },
+			  { YOG,  YG, YRG }
+			} };
+
+	int i = 0;
+
+	if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
+	 && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+	 && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
+
+	}
+	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
+		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
+
+	}
+	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
+		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
+
+	}
+	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
+		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
+
+	}
+	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
+		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
+
+	}
+	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
+		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
+
+	}
+	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
+		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
+
+	}
+	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
+		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
+
+	}
+	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
+		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
+
+	}
+	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
+		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
+
+	}
+	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
+		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
+
+	}
+	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
+		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
+
+	}
+	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
+		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
+
+	}
+	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
+		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
+
+	}
+	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
+		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
+
+	}
+	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
+		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
+
+	}
+	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
+		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
+
+	}
+	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
+		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
+
+	}
+	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
+		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
+
+	}
+	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
+		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
+
+	}
+	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2] //This can be changed to just an else
+		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
+
+	}
 }
 
 void orientLastLayer() {
