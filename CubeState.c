@@ -39,6 +39,21 @@ Cubelet cF[12][9] = { //Values of each of the cube faces
 			N, N, N, B, B, B, N, N, N,
 			N, N, N, B, B, B, N, N, N	};
 
+Cubelet solvedFaces[12][9] = { //Values of each of the cube faces
+			N, N, N, W, W, W, N, N, N,
+			N, N, N, W, W, W, N, N, N,
+			N, N, N, W, W, W, N, N, N,
+			O, O, O, G, G, G, R, R, R,
+			O, O, O, G, G, G, R, R, R,
+			O, O, O, G, G, G, R, R, R,
+			N, N, N, Y, Y, Y, N, N, N,
+			N, N, N, Y, Y, Y, N, N, N,
+			N, N, N, Y, Y, Y, N, N, N,
+			N, N, N, B, B, B, N, N, N,
+			N, N, N, B, B, B, N, N, N,
+			N, N, N, B, B, B, N, N, N	};
+
+void permutateLastLayer();
 void orientLastLayer();
 void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge);
 void setUpForF2L(Cubelet corner, Cubelet edge);
@@ -69,6 +84,8 @@ void downInverse();
 void upInverse();
 void rightInverse(Cubelet f);
 void leftInverse(Cubelet f);
+int checkSolved(); //TODO: move main to the end? or maybe leave this and give brief overview of use? ... idk, something like that
+void rotateLastLayer();
 
 int main(int argc, char* argv[]) {
 	//Do Stuff
@@ -83,7 +100,7 @@ int main(int argc, char* argv[]) {
 		leftInverse(G);
 		printCube(1);
 	}
-	if (1==2) {
+	if (1==1) {
 		int i;
 		srand(time(NULL));
 		for (i=0;i<20;i++) {
@@ -133,17 +150,45 @@ int main(int argc, char* argv[]) {
 	}
 
 	if (1==1) {
-		cubeInput(argv[1]);
+		//cubeInput(argv[1]);
 		whiteCross();
 		firstTwoLayers();
 		//printCube(1);
 		orientLastLayer();
-		printCube(1);
+		permutateLastLayer();
+		rotateLastLayer();
 		fixInverse();
+		if (checkSolved()) {
+			printf("SOLVED - SOLVED - SOLVED\n");
+		}
+		else {
+			printf("UNSOLVED - UNSOLVED - UNSOLVED\n");
+		}
+		printCube(1);
 		printf("%s\n", solution);
 	}
 
 	return 0;
+}
+
+int checkSolved() {
+	int i,j;
+	for (i=0; i<12; i++) {
+		for (j=0; j<9; j++) {
+			if (cF[i][j] != solvedFaces[i][j]) {
+				return 0;
+			}
+		}
+	}
+	return 1;
+}
+
+void rotateLastLayer() {
+	int test = 0;
+	while (cF[5][4] != G && test < 5) { //TODO: this is to prevent an infinite loop - could take it out if i want, or not... idk
+		down();
+		test++;
+	}
 }
 
 void permutateLastLayer() { //TODO: this whole thing can drop checking the center cubelet, but I mean, it does not have to
@@ -152,129 +197,177 @@ void permutateLastLayer() { //TODO: this whole thing can drop checking the cente
 			  {  YR,   Y,  YO },
 			  { YRG,  YG, YOG }
 			}, {
-			  {  WO,   W,  WR }, //TWO
-			  {   O,   N,   R },
-			  {  YO,   Y,  YR }
+			  { YRG,  YR, YRB }, //TWO
+			  {  YG,   Y,  YB },
+			  { YOG,  YO, YOB }
 			}, {
-			  {  WO,   W,  WR }, //THREE
-			  {   O,   N,   R },
-			  {  YO,   Y,  YR }
+			  { YOG,  YG, YRG }, //THREE
+			  {  YO,   Y,  YR },
+			  { YOB,  YB, YRB }
 			}, {
-			  { WOG,  WG, WRG }, //FOUR
-			  {  OG,   G,  RG },
-			  { YOG,  YG, YRG }
-			} };
-
-	int i = 0;
-
-	if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
-	 && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
-	 && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
-
+			  { YOB,  YO, YOG }, //FOUR
+			  {  YB,   Y,  YG },
+			  { YRB,  YR, YRG }
+			} }; //TODO: remove the trailing down's because they are not helpful at all
+	printf("PLL - ");
+	int i,j;
+	for (i=0; i<4; i++) {
+		for (j=0; j<4; j++) {
+			if (cP[0][2][2] == locations[i][0][2] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][2][2] //1
+			 && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+			 && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][0][0]) {
+				printf("AA\n");	
+				leftInverse(G); front(G); leftInverse(G); back(G); back(G); left(G); frontInverse(G); leftInverse(G); back(G); back(G); left(G); left(G);
+				return;
+			}
+			else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][2][0] //2
+				  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+				  && cP[2][2][2] == locations[i][2][2] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][0][2]) {
+				printf("BB\n");	
+				left(G); backInverse(G); left(G); front(G); front(G); leftInverse(G); back(G); left(G); front(G); front(G); left(G); left(G);
+				return;
+			}
+			else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2] //3
+				  && cP[1][2][2] == locations[i][1][2] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][2][1]
+				  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][1][0] && cP[2][2][0] == locations[i][2][2]) {
+				printf("CC\n");	
+				left(G); left(G); down(G); left(G); down(G); leftInverse(G); downInverse(G); leftInverse(G); downInverse(G); leftInverse(G); down(G); leftInverse(G);
+				return;
+			}
+			else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2] //4
+				  && cP[1][2][2] == locations[i][2][1] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][0]
+				  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][1][2] && cP[2][2][0] == locations[i][2][2]) {
+				printf("DD\n");	
+				left(G); downInverse(G); left(G); down(G); left(G); down(G); left(G); downInverse(G); leftInverse(G); downInverse(G); left(G); left(G);
+				return;
+			}
+			else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][2][1] && cP[0][2][0] == locations[i][0][2] //5
+				  && cP[1][2][2] == locations[i][1][2] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][0]
+				  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][0][1] && cP[2][2][0] == locations[i][2][2]) {
+				printf("EE\n");	
+				left(G); left(G); rightInverse(G); rightInverse(G); up(G); left(G); left(G); rightInverse(G); rightInverse(G); down(G); down(G); left(G); left(G); rightInverse(G); rightInverse(G); up(G); left(G); left(G); rightInverse(G); rightInverse(G);
+				return;
+			}
+			else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][2][2] //6
+				  && cP[1][2][2] == locations[i][1][2] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][0]
+				  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][0][2]) {
+				printf("FF\n");	
+				left(G); down(G); leftInverse(G); downInverse(G); leftInverse(G); front(G); left(G); left(G); downInverse(G); leftInverse(G); downInverse(G); left(G); down(G); leftInverse(G); frontInverse(G);
+				return;
+			}
+			else if (cP[0][2][2] == locations[i][0][2] && cP[0][2][1] == locations[i][1][0] && cP[0][2][0] == locations[i][0][0] //7
+				  && cP[1][2][2] == locations[i][0][1] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+				  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
+				printf("GG\n");
+				leftInverse(G); down(G); rightInverse(G); down(G); down(G); left(G); downInverse(G); leftInverse(G); down(G); down(G); left(G); right(G); downInverse(G);
+				return;
+			}
+			else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][2][2] //8
+				  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][2][1]
+				  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][1][2] && cP[2][2][0] == locations[i][0][2]) {
+				printf("HH\n");	
+				left(G); down(G); leftInverse(G); frontInverse(G); left(G); down(G); leftInverse(G); downInverse(G); leftInverse(G); front(G); left(G); left(G); downInverse(G); leftInverse(G); downInverse(G);
+				return;
+			}
+			else if (cP[0][2][2] == locations[i][0][2] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][0] //9
+				  && cP[1][2][2] == locations[i][2][1] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+				  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][1][0] && cP[2][2][0] == locations[i][2][2]) {
+				printf("II\n");	
+				right(G); down(G); down(G); rightInverse(G); down(G); down(G); right(G); frontInverse(G); rightInverse(G); downInverse(G); right(G); down(G); right(G); front(G); right(G); right(G); down(G);
+				return;
+			}
+			else if (cP[0][2][2] == locations[i][0][2] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][0] //10
+				  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][2][1]
+				  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][1][2] && cP[2][2][0] == locations[i][2][2]) {
+				printf("JJ\n");	
+				leftInverse(G); down(G); down(G); left(G); down(G); down(G); leftInverse(G); front(G); left(G); down(G); leftInverse(G); downInverse(G); leftInverse(G); frontInverse(G); left(G); left(G); downInverse(G);
+				return;
+			}
+			else if (cP[0][2][2] == locations[i][2][2] && cP[0][2][1] == locations[i][1][2] && cP[0][2][0] == locations[i][0][2] //11
+				  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][0][1]
+				  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][0][0]) {
+				printf("KK\n");	
+				leftInverse(G); down(G); leftInverse(G); downInverse(G); backInverse(G); leftInverse(G); back(G); back(G); downInverse(G); backInverse(G); down(G); backInverse(G); left(G); back(G); left(G);
+				return;
+			}
+			else if (cP[0][2][2] == locations[i][0][2] && cP[0][2][1] == locations[i][1][0] && cP[0][2][0] == locations[i][2][0] //12
+				  && cP[1][2][2] == locations[i][1][2] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][0][1]
+				  && cP[2][2][2] == locations[i][0][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
+				printf("LL\n");	
+				left(G); left(G); up(G); backInverse(G); down(G); backInverse(G); downInverse(G); back(G); upInverse(G); left(G); left(G); frontInverse(G); down(G); front(G);
+				return;
+			}
+			else if (cP[0][2][2] == locations[i][2][0] && cP[0][2][1] == locations[i][2][1] && cP[0][2][0] == locations[i][0][2] //13
+				  && cP[1][2][2] == locations[i][0][1] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+				  && cP[2][2][2] == locations[i][2][2] && cP[2][2][1] == locations[i][1][0] && cP[2][2][0] == locations[i][0][0]) {
+				printf("MM\n");	
+				leftInverse(G); downInverse(G); left(G); back(G); back(G); up(G); rightInverse(G); down(G); right(G); downInverse(G); right(G); upInverse(G); back(G); back(G);
+				return;
+			}
+			else if (cP[0][2][2] == locations[i][2][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2] //14
+				  && cP[1][2][2] == locations[i][1][2] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][2][1]
+				  && cP[2][2][2] == locations[i][2][2] && cP[2][2][1] == locations[i][1][0] && cP[2][2][0] == locations[i][0][0]) {
+				printf("NN\n");	
+				left(G); left(G); upInverse(G); front(G); downInverse(G); front(G); down(G); frontInverse(G); up(G); left(G); left(G); back(G); downInverse(G); backInverse(G);
+				return;
+			}
+			else if (cP[0][2][2] == locations[i][0][2] && cP[0][2][1] == locations[i][1][0] && cP[0][2][0] == locations[i][2][0] //15
+				  && cP[1][2][2] == locations[i][2][1] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+				  && cP[2][2][2] == locations[i][0][0] && cP[2][2][1] == locations[i][0][1] && cP[2][2][0] == locations[i][2][2]) {
+				printf("OO\n");	
+				left(G); down(G); leftInverse(G); front(G); front(G); upInverse(G); right(G); downInverse(G); rightInverse(G); down(G); rightInverse(G); up(G); front(G); front(G);
+				return;
+			}
+			else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2] //16
+				  && cP[1][2][2] == locations[i][1][2] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][0]
+				  && cP[2][2][2] == locations[i][2][2] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][0]) {
+				printf("PP\n");	
+				leftInverse(G); down(G); down(G); leftInverse(G); downInverse(G); backInverse(G); leftInverse(G); back(G); back(G); downInverse(G); backInverse(G); down(G); backInverse(G); left(G); back(G); downInverse(G); left(G);
+				return;
+			}
+			else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][1][0] && cP[0][2][0] == locations[i][0][2] //17
+				  && cP[1][2][2] == locations[i][0][1] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][2][1]
+				  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][1][2] && cP[2][2][0] == locations[i][2][2]) {
+				printf("QQ\n");	
+				left(G); left(G); rightInverse(G); rightInverse(G); up(G); left(G); left(G); rightInverse(G); rightInverse(G); down(G); leftInverse(G); right(G); front(G); front(G); left(G); left(G); rightInverse(G); rightInverse(G); back(G); back(G); leftInverse(G); right(G); up(G); up(G);
+				return;
+			}
+			else if (cP[0][2][2] == locations[i][2][2] && cP[0][2][1] == locations[i][1][0] && cP[0][2][0] == locations[i][0][2] //18
+				  && cP[1][2][2] == locations[i][0][1] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+				  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][0][0]) {
+				printf("RR\n");
+				front(G); left(G); downInverse(G); leftInverse(G); downInverse(G); left(G); down(G); leftInverse(G); frontInverse(G); left(G); down(G); leftInverse(G); downInverse(G); leftInverse(G); front(G); left(G); frontInverse(G);	
+				return;
+			}
+			else if (cP[0][2][2] == locations[i][2][2] && cP[0][2][1] == locations[i][2][1] && cP[0][2][0] == locations[i][0][2] //19
+				  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+				  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][0][1] && cP[2][2][0] == locations[i][0][0]) {
+				printf("SS\n");	
+				right(G); downInverse(G); left(G); down(G); down(G); rightInverse(G); down(G); leftInverse(G); right(G); downInverse(G); left(G); down(G); down(G); rightInverse(G); down(G); leftInverse(G); down(G);
+				return;
+			}
+			else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][2][1] && cP[0][2][0] == locations[i][2][0] //20
+				  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+				  && cP[2][2][2] == locations[i][0][2] && cP[2][2][1] == locations[i][0][1] && cP[2][2][0] == locations[i][2][2]) {
+				printf("TT\n");	
+				leftInverse(G); down(G); rightInverse(G); down(G); down(G); left(G); downInverse(G); right(G); leftInverse(G); down(G); rightInverse(G); down(G); down(G); left(G); downInverse(G); right(G); downInverse(G);
+				return;
+			}
+			else if (cP[0][2][2] == locations[i][2][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][2][2] //21 //This can be changed to just an else
+				  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+				  && cP[2][2][2] == locations[i][0][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][0][2]) {
+				printf("UU\n");	
+				left(G); backInverse(G); leftInverse(G); front(G); left(G); back(G); leftInverse(G); front(G); front(G); rightInverse(G); back(G); right(G); front(G); rightInverse(G); backInverse(G); right(G);
+				return;
+			}
+			down(G);
+		}
 	}
-	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
-		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
-		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
-
-	}
-	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
-		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
-		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
-
-	}
-	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
-		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
-		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
-
-	}
-	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
-		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
-		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
-
-	}
-	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
-		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
-		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
-
-	}
-	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
-		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
-		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
-
-	}
-	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
-		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
-		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
-
-	}
-	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
-		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
-		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
-
-	}
-	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
-		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
-		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
-
-	}
-	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
-		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
-		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
-
-	}
-	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
-		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
-		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
-
-	}
-	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
-		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
-		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
-
-	}
-	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
-		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
-		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
-
-	}
-	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
-		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
-		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
-
-	}
-	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
-		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
-		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
-
-	}
-	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
-		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
-		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
-
-	}
-	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
-		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
-		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
-
-	}
-	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
-		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
-		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
-
-	}
-	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2]
-		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
-		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
-
-	}
-	else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2] //This can be changed to just an else
-		  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
-		  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
-
-	}
+	printf("FAIL\n");
 }
 
 void orientLastLayer() {
+	printf("OLL - ");
 	int i;
 	for (i=0; i<4; i++) {
 		if    (cF[7][4] == Y && cF[9][4] == Y && cF[5][0] == Y && cF[5][1] == Y
@@ -645,7 +738,7 @@ void orientLastLayer() {
 		}
 		down();
 	}
-	printf("YOU DIDN'T FIND A CORRECT F2L, YA DWEEB!\n");
+	printf("FAIL\n");
 }
 
 int inputToFaces(char c) {
@@ -899,18 +992,16 @@ void firstTwoLayers() {
  //I lost those things that i wrote... but i remember so... dope
 
 	setUpForF2L(WOG, OG);
-	//printCube(1);
-	//printf("WOG - ");
+	printf("WOG - ");
 	doF2LSolution(G, WOG, OG);
 	setUpForF2L(WRB, RB); //TODO: I'm getting "Abort Trap: 6" for some reason (writing to memory I dont own???)... idk
-	//printf("WRB - ");
+	printf("WRB - ");
 	doF2LSolution(B, WRB, RB);
 	setUpForF2L(WOB, OB);
-	//printf("WOB - ");
+	printf("WOB - ");
 	doF2LSolution(O, WOB, OB);
 	setUpForF2L(WRG, RG); //TODO: also got "Abort Trap: 6" ... idk my man, deal with it later i guess
-	//printf("WRG - ");
-	//printCube(1);
+	printf("WRG - ");
 	doF2LSolution(R, WRG, RG);
 
 	//TODO
@@ -1069,408 +1160,468 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 		if (corner_orientation == 0) {
 			if (edge_position == 4) {
 				if (edge_orientation == 0) {
-					//printf("J - ");
+					printf("A");
 					left(face); down(face); leftInverse(face); downInverse(face);
 					left(face); down(face); leftInverse(face); downInverse(face);
 					left(face); down(face); leftInverse(face);
+					return;
 				}
 				else { //TODO: DO A SEARCH AND REPLEACE FOR () - (face)
-					//printf("J - ");
+					printf("B");
 					left(face); downInverse(face); leftInverse(face);
 					down(face); frontInverse(face); down(face); front(face);
+					return;
 				}
 			}
 			else if (edge_position == 0) {
 				if (edge_orientation == 0) {
-					//printf("J - ");
+					printf("C");
 					left(face); down(face); leftInverse(face); downInverse(face);
 					downInverse(face);
 					left(face); down(face); leftInverse(face); downInverse(face);
 					left(face); down(face); leftInverse(face);
+					return;
 				}
 				else {
-					//printf("J - ");
+					printf("D");
 					frontInverse(face); down(face); down(face); front(face);
 					down(face); frontInverse(face); downInverse(face); front(face);
+					return;
 				}
 			}
 			else if (edge_position == 1) {
 				if (edge_orientation == 0) {
-					//printf("J - ");
+					printf("E");
 					left(face); down(face); down(face); leftInverse(face);
 					downInverse(face); left(face); down(face); leftInverse(face);
+					return;
 				}
 				else {
-					//printf("J - ");
+					printf("F");
 					frontInverse(face); downInverse(face); front(face); down(face);
 					down(face);
 					frontInverse(face); downInverse(face); front(face); down(face);
 					frontInverse(face); downInverse(face); front(face);
+					return;
 				}
 			}
 			else if (edge_position == 2) {
 				if (edge_orientation == 0) {
-					//printf("J - ");
+					printf("G");
 					down(face); left(face); down(face); down(face); leftInverse(face);
 					down(face); left(face); downInverse(face); leftInverse(face);	
+					return;
 				}
 				else {
-					//printf("J - ");
+					printf("H");
 					down(face); down(face); frontInverse(face); downInverse(face); front(face);
 					downInverse(face); frontInverse(face); down(face); front(face);
+					return;
 				}
 			}
 			else if (edge_position == 3) { //TODO: this can technically just be an if --- would only make it harder to read
 				if (edge_orientation == 0) {
-					//printf("J - ");
+					printf("I");
 					down(face); down(face); left(face); down(face); leftInverse(face);
 					down(face); left(face); downInverse(face); leftInverse(face);	
+					return;
 				}
 				else {
-					//printf("J - ");
+					printf("J");
 					downInverse(face); frontInverse(face); down(face); down(face); front(face);
 					downInverse(face); frontInverse(face); down(face); front(face);
+					return;
 				}
 			}
-			//printf("YUP\n");
+			printf("1\n");
 		}
 		else if (corner_orientation == 1) {
 			if (edge_position == 4) {
 				if (edge_orientation == 0) {
-					//printf("A - ");
+					printf("A");
 					downInverse(face); left(face); downInverse(face); leftInverse(face);
 					downInverse(face); left(face); down(face); down(face); leftInverse(face);
+					return;
 				}
 				else {
-					//printf("B - ");
+					printf("B");
 					downInverse(face); left(face); down(face); leftInverse(face);
 					down(face);
 					frontInverse(face); downInverse(face); front(face);
+					return;
 				}
 			}
 			else if (edge_position == 0) {
 				if (edge_orientation == 0) {
-					//printf("C - ");
+					printf("C");
 					frontInverse(face); down(face); front(face); downInverse(face);
 					downInverse(face);
 					left(face); down(face); leftInverse(face);
+					return;
 				}
 				else {
-					//printf("D - ");
+					printf("D");
 					down(face); frontInverse(face); down(face); front(face); downInverse(face);
 					frontInverse(face); downInverse(face); front(face);
+					return;
 				}
 			}
 			else if (edge_position == 1) {
 				if (edge_orientation == 0) {
-					//printf("E - ");
+					printf("E");
 					down(face); left(face); downInverse(face); leftInverse(face);
+					return;
 				}
 				else {
-					//printf("F - ");
+					printf("F");
 					downInverse(face); left(face); down(face); down(face); leftInverse(face); down(face);
 					frontInverse(face); downInverse(face); front(face);
+					return;
 				}
 			}
 			else if (edge_position == 2) {
 				if (edge_orientation == 0) {
-					//printf("G - ");
+					printf("G");
 					downInverse(face); left(face); down(face); leftInverse(face);
 					downInverse(face); left(face); down(face); down(face); leftInverse(face);
+					return;
 				}
 				else {
-					//printf("H - ");
+					printf("H");
 					down(face); frontInverse(face); downInverse(face); front(face); downInverse(face);
 					frontInverse(face); downInverse(face); front(face);
+					return;
 				}
 			}
 			else if (edge_position == 3) { //TODO: this can technically just be an if --- would only make it harder to read
 				if (edge_orientation == 0) {
-					//printf("I - ");
+					printf("I");
 					downInverse(face); left(face); down(face); down(face); leftInverse(face);
 					downInverse(face); left(face); down(face); down(face); leftInverse(face);
+					return;
 				}
 				else {
-					//printf("J - ");
+					printf("J");
 					frontInverse(face); downInverse(face); front(face);
+					return;
 				}
 			}
-			//printf("GRAPE\n");
+			printf("2\n");
 		}
 		else if (corner_orientation == 2) {
 			if (edge_position == 4) {
 				if (edge_orientation == 0) {
-					//printf("A - ");
+					printf("A");
 					down(face); frontInverse(face); down(face); front(face);
 					down(face); frontInverse(face); down(face); down(face); front(face);
+					return;
 				}
 				else {
-					//printf("B - ");
+					printf("B");
 					down(face); frontInverse(face); downInverse(face); front(face);
 					downInverse(face);
 					left(face); down(face); leftInverse(face); //TODO: this could be a trouble spot... good first place to check
+					return;
 				}
 			}
 			else if (edge_position == 0) {
 				if (edge_orientation == 0) {
-					//printf("C - ");
+					printf("C");
 					down(face); frontInverse(face); down(face); down(face); front(face); downInverse(face);
 					left(face); down(face); leftInverse(face);
+					return;
 				}
 				else {
-					//printf("D - ");
+					printf("D");
 					downInverse(face); frontInverse(face); down(face); front(face);
+					return;
 				}
 			}
 			else if (edge_position == 1) {
 				if (edge_orientation == 0) {
-					//printf("E - ");
+					printf("E");
 					downInverse(face); left(face); downInverse(face); leftInverse(face); down(face);
 					left(face); down(face); leftInverse(face);
+					return;
 				}
 				else {
-					//printf("F - ");
+					printf("F");
 					left(face); downInverse(face); leftInverse(face); down(face);
 					down(face);
 					frontInverse(face); downInverse(face); front(face);
+					return;
 				}
 			}
 			else if (edge_position == 2) {
 				if (edge_orientation == 0) {
-					//printf("G - ");
+					printf("G");
 					left(face); down(face); leftInverse(face);
+					return;
 				}
 				else {
-					//printf("H - ");
+					printf("H");
 					down(face); frontInverse(face); down(face); down(face); front(face);
 					down(face); frontInverse(face); down(face); down(face); front(face);
+					return;
 				}
 			}
 			else if (edge_position == 3) { //TODO: this can technically just be an if --- would only make it harder to read
 				if (edge_orientation == 0) {
-					//printf("I - ");
+					printf("I");
 					downInverse(face); left(face); down(face); leftInverse(face); down(face);
 					left(face); down(face); leftInverse(face);
+					return;
 				}
 				else {
-					//printf("J - ");
+					printf("J");
 					down(face); frontInverse(face); downInverse(face); front(face);
 					down(face); frontInverse(face); down(face); down(face); front(face);
+					return;
 				}
 			}
-			//printf("KERPLUP\n");
+			printf("3\n");
 		}
 	}
 	if (corner_layer == 0) {
 		if (corner_orientation == 0) {
 			if (edge_position == 4) {
 				if (edge_orientation == 0) {
-					//printf("A - ");
+					printf("A");
 					//MY WORK HERE IS DONE
 				}
 				else {
-					//printf("B - ");
+					printf("B");
 					left(face); downInverse(face); leftInverse(face);
 					down(face);
 					frontInverse(face); down(face); down(face); front(face);
 					down(face); frontInverse(face); down(face); down(face); front(face); //TODO: do i reset the cube orientation for this line... idk man
+					return;
 				}
 			}
 			else if (edge_position == 0) {
 				if (edge_orientation == 0) {
-					//printf("C - ");
+					printf("C");
 					downInverse(); downInverse(); frontInverse(face); down(face); front(face);
 					down(face); left(face); downInverse(face); leftInverse(face);	
+					return;
 				}
 				else {
-					//printf("D - ");
+					printf("D");
 					down(face); left(face); downInverse(face); leftInverse(face);
 					downInverse(face); frontInverse(face); down(face); front(face);	
+					return;
 				}
 			}
 			else if (edge_position == 1) {
 				if (edge_orientation == 0) {
-					//printf("E - ");
+					printf("E");
 					downInverse(face); frontInverse(face); down(face); front(face);
 					down(face); left(face); downInverse(face); leftInverse(face);	
+					return;
 				}
 				else {
-					//printf("F - ");
+					printf("F");
 					left(face); downInverse(face); leftInverse(face);
 					downInverse(face); frontInverse(face); down(face); front(face);	
+					return;
 				}
 			}
 			else if (edge_position == 2) {
 				if (edge_orientation == 0) {
-					//printf("G - ");
+					printf("G");
 					frontInverse(face); down(face); front(face);
 					down(face); left(face); downInverse(face); leftInverse(face);	
+					return;
 				}
 				else {
-					//printf("H - ");
+					printf("H");
 					downInverse(face); left(face); downInverse(face); leftInverse(face);
 					downInverse(face); frontInverse(face); down(face); front(face);	
+					return;
 				}
 			}
 			else if (edge_position == 3) { //TODO: this can technically just be an if --- would only make it harder to read
 				if (edge_orientation == 0) {
-					//printf("I - ");
+					printf("I");
 					down(face); frontInverse(face); down(face); front(face);
 					down(face); left(face); downInverse(face); leftInverse(face);
+					return;
 				}
 				else {
-					//printf("J - ");
+					printf("J");
 					left(face); downInverse(face); leftInverse(face);
 					downInverse(face); frontInverse(face); down(face); front(face);	
+					return;
 				}
 			}
-			//printf("CRIKEY\n");
+			printf("4\n");
 		}
 		else if (corner_orientation == 1) {
 			if (edge_position == 4) {
 				if (edge_orientation == 0) {
-					//printf("A - ");
+					printf("A");
 					left(face); downInverse(face); leftInverse(face);
 					down(face);
 					frontInverse(face); down(face); down(face); front(face);
 					down(face); frontInverse(face); down(face); down(face); front(face);
+					return;
 				}
 				else {
-					//printf("B - ");
+					printf("B");
 					left(face); down(face); leftInverse(face); downInverse(face); left(face); downInverse(face); leftInverse(face);
 					down(face);
 					down(face);
 					frontInverse(face); downInverse(face); front(face);
+					return;
 				}
 			}
 			else if (edge_position == 0) {
 				if (edge_orientation == 0) {
-					//printf("C - ");
+					printf("C");
 					downInverse(face);
 					left(face); down(face); leftInverse(face);
 					downInverse(face); left(face); down(face); leftInverse(face);
+					return;
 				}
 				else {
-					//printf("D - ");
+					printf("D");
 					frontInverse(face); down(face); front(face);
 					downInverse(face); frontInverse(face); down(face); front(face);
+					return;
 				}
 			}
 			else if (edge_position == 1) {
 				if (edge_orientation == 0) {
-					//printf("E - ");
+					printf("E");
 					left(face); down(face); leftInverse(face);
 					downInverse(face); left(face); down(face); leftInverse(face);
+					return;
 				}
 				else {
-					//printf("F - ");
+					printf("F");
 					down(face);
 					frontInverse(face); down(face); front(face);
 					downInverse(face); frontInverse(face); down(face); front(face);
+					return;
 				}
 			}
 			else if (edge_position == 2) {
 				if (edge_orientation == 0) {
-					//printf("G - ");
+					printf("G");
 					down(face);
 					left(face); down(face); leftInverse(face);
 					downInverse(face); left(face); down(face); leftInverse(face);
+					return;
 				}
 				else {
-					//printf("H - ");
+					printf("H");
 					down(face); down(face);
 					frontInverse(face); down(face); front(face);
 					downInverse(face); frontInverse(face); down(face); front(face);
+					return;
 				}
 			}
 			else if (edge_position == 3) { //TODO: this can technically just be an if --- would only make it harder to read
 				if (edge_orientation == 0) {
-					//printf("I - ");
+					printf("I");
 					down(face); down(face);
 					left(face); down(face); leftInverse(face);
 					downInverse(face); left(face); down(face); leftInverse(face);
+					return;
 				}
 				else {
-					//printf("J - ");
+					printf("J");
 					downInverse(face);
 					frontInverse(face); down(face); front(face);
 					downInverse(face); frontInverse(face); down(face); front(face);
+					return;
 				}
 			}
-			//printf("RUBY\n");
+			printf("5\n");
 		}
 		else if (corner_orientation == 2) {
 			if (edge_position == 4) {
 				if (edge_orientation == 0) {
-					//printf("A - ");
+					printf("A");
 					left(face); downInverse(face); leftInverse(face); downInverse(face); left(face); down(face); leftInverse(face);
 					downInverse(face); left(face); down(face); down(face); leftInverse(face);
+					return;
 				}
 				else {
-					//printf("B - ");
+					printf("B");
 					left(face); downInverse(face); leftInverse(face);
 					down(face);
 					frontInverse(face); downInverse(face); front(face);
 					downInverse(face); frontInverse(face); downInverse(face); front(face);
+					return;
 				}
 			}
 			else if (edge_position == 0) {
 				if (edge_orientation == 0) {
-					//printf("C - ");
+					printf("C");
 					downInverse(face);
 					left(face); downInverse(face); leftInverse(face);
 					down(face); left(face); downInverse(face); leftInverse(face);
+					return;
 				}
 				else {
-					//printf("D - ");
+					printf("D");
 					frontInverse(face); downInverse(face); front(face);
 					down(face); frontInverse(face); downInverse(face); front(face);
+					return;
 				}
 			}
 			else if (edge_position == 1) {
 				if (edge_orientation == 0) {
-					//printf("E - ");
+					printf("E");
 					left(face); downInverse(face); leftInverse(face);
 					down(face); left(face); downInverse(face); leftInverse(face);
+					return;
 				}
 				else {
-					//printf("F - ");
+					printf("F");
 					down(face);
 					frontInverse(face); downInverse(face); front(face);
 					down(face); frontInverse(face); downInverse(face); front(face);
+					return;
 				}
 			}
 			else if (edge_position == 2) {
 				if (edge_orientation == 0) {
-					//printf("G - ");
+					printf("G");
 					down(face);
 					left(face); downInverse(face); leftInverse(face);
 					down(face); left(face); downInverse(face); leftInverse(face);
+					return;
 				}
 				else {
-					//printf("H - ");
+					printf("H");
 					down(face); down(face);
 					frontInverse(face); downInverse(face); front(face);
 					down(face); frontInverse(face); downInverse(face); front(face);
+					return;
 				}
 			}
 			else if (edge_position == 3) { //TODO: this can technically just be an if --- would only make it harder to read
 				if (edge_orientation == 0) {
-					//printf("I - ");
+					printf("I");
 					down(face); down(face);
 					left(face); downInverse(face); leftInverse(face);
 					down(face); left(face); downInverse(face); leftInverse(face);
+					return;
 				}
 				else {
-					//printf("J - ");
+					printf("J");
 					downInverse();
 					frontInverse(face); downInverse(face); front(face);
 					down(face); frontInverse(face); downInverse(face); front(face);
+					return;
 				}
 			}
-			//printf("DONNERZ\n");
+			printf("6\n");
 		}
 	}
+	printf("FAIL\n");
 
 	/*
 	//TODO: update edge_position for the face
