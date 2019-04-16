@@ -89,18 +89,7 @@ void rotateLastLayer();
 
 int main(int argc, char* argv[]) {
 	//Do Stuff
-	if (1==2) { //Make A Cool Pattern
-		right(G);
-		leftInverse(G);
-		front(G);
-		backInverse(G);
-		up(G);
-		downInverse(G);
-		right(G);
-		leftInverse(G);
-		printCube(1);
-	}
-	if (1==1) {
+	if (1==2) {
 		int i;
 		srand(time(NULL));
 		for (i=0;i<20;i++) {
@@ -150,10 +139,9 @@ int main(int argc, char* argv[]) {
 	}
 
 	if (1==1) {
-		//cubeInput(argv[1]);
+		cubeInput(argv[1]);
 		whiteCross();
 		firstTwoLayers();
-		//printCube(1);
 		orientLastLayer();
 		permutateLastLayer();
 		rotateLastLayer();
@@ -213,7 +201,13 @@ void permutateLastLayer() { //TODO: this whole thing can drop checking the cente
 	int i,j;
 	for (i=0; i<4; i++) {
 		for (j=0; j<4; j++) {
-			if (cP[0][2][2] == locations[i][0][2] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][2][2] //1
+			if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2] //1
+			 && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+			 && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
+				printf("XX\n");	
+				return;
+			}	
+			else if (cP[0][2][2] == locations[i][0][2] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][2][2] //1
 			 && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
 			 && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][0][0]) {
 				printf("AA\n");	
@@ -1164,13 +1158,11 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					left(face); down(face); leftInverse(face); downInverse(face);
 					left(face); down(face); leftInverse(face); downInverse(face);
 					left(face); down(face); leftInverse(face);
-					return;
 				}
 				else { //TODO: DO A SEARCH AND REPLEACE FOR () - (face)
 					printf("B");
 					left(face); downInverse(face); leftInverse(face);
 					down(face); frontInverse(face); down(face); front(face);
-					return;
 				}
 			}
 			else if (edge_position == 0) {
@@ -1180,13 +1172,11 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					downInverse(face);
 					left(face); down(face); leftInverse(face); downInverse(face);
 					left(face); down(face); leftInverse(face);
-					return;
 				}
 				else {
 					printf("D");
 					frontInverse(face); down(face); down(face); front(face);
 					down(face); frontInverse(face); downInverse(face); front(face);
-					return;
 				}
 			}
 			else if (edge_position == 1) {
@@ -1194,7 +1184,6 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					printf("E");
 					left(face); down(face); down(face); leftInverse(face);
 					downInverse(face); left(face); down(face); leftInverse(face);
-					return;
 				}
 				else {
 					printf("F");
@@ -1202,7 +1191,6 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					down(face);
 					frontInverse(face); downInverse(face); front(face); down(face);
 					frontInverse(face); downInverse(face); front(face);
-					return;
 				}
 			}
 			else if (edge_position == 2) {
@@ -1210,13 +1198,11 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					printf("G");
 					down(face); left(face); down(face); down(face); leftInverse(face);
 					down(face); left(face); downInverse(face); leftInverse(face);	
-					return;
 				}
 				else {
 					printf("H");
 					down(face); down(face); frontInverse(face); downInverse(face); front(face);
 					downInverse(face); frontInverse(face); down(face); front(face);
-					return;
 				}
 			}
 			else if (edge_position == 3) { //TODO: this can technically just be an if --- would only make it harder to read
@@ -1224,13 +1210,11 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					printf("I");
 					down(face); down(face); left(face); down(face); leftInverse(face);
 					down(face); left(face); downInverse(face); leftInverse(face);	
-					return;
 				}
 				else {
 					printf("J");
 					downInverse(face); frontInverse(face); down(face); down(face); front(face);
 					downInverse(face); frontInverse(face); down(face); front(face);
-					return;
 				}
 			}
 			printf("1\n");
@@ -1241,14 +1225,12 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					printf("A");
 					downInverse(face); left(face); downInverse(face); leftInverse(face);
 					downInverse(face); left(face); down(face); down(face); leftInverse(face);
-					return;
 				}
 				else {
 					printf("B");
 					downInverse(face); left(face); down(face); leftInverse(face);
 					down(face);
 					frontInverse(face); downInverse(face); front(face);
-					return;
 				}
 			}
 			else if (edge_position == 0) {
@@ -1257,26 +1239,22 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					frontInverse(face); down(face); front(face); downInverse(face);
 					downInverse(face);
 					left(face); down(face); leftInverse(face);
-					return;
 				}
 				else {
 					printf("D");
 					down(face); frontInverse(face); down(face); front(face); downInverse(face);
 					frontInverse(face); downInverse(face); front(face);
-					return;
 				}
 			}
 			else if (edge_position == 1) {
 				if (edge_orientation == 0) {
 					printf("E");
 					down(face); left(face); downInverse(face); leftInverse(face);
-					return;
 				}
 				else {
 					printf("F");
 					downInverse(face); left(face); down(face); down(face); leftInverse(face); down(face);
 					frontInverse(face); downInverse(face); front(face);
-					return;
 				}
 			}
 			else if (edge_position == 2) {
@@ -1284,13 +1262,11 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					printf("G");
 					downInverse(face); left(face); down(face); leftInverse(face);
 					downInverse(face); left(face); down(face); down(face); leftInverse(face);
-					return;
 				}
 				else {
 					printf("H");
 					down(face); frontInverse(face); downInverse(face); front(face); downInverse(face);
 					frontInverse(face); downInverse(face); front(face);
-					return;
 				}
 			}
 			else if (edge_position == 3) { //TODO: this can technically just be an if --- would only make it harder to read
@@ -1298,12 +1274,10 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					printf("I");
 					downInverse(face); left(face); down(face); down(face); leftInverse(face);
 					downInverse(face); left(face); down(face); down(face); leftInverse(face);
-					return;
 				}
 				else {
 					printf("J");
 					frontInverse(face); downInverse(face); front(face);
-					return;
 				}
 			}
 			printf("2\n");
@@ -1314,14 +1288,12 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					printf("A");
 					down(face); frontInverse(face); down(face); front(face);
 					down(face); frontInverse(face); down(face); down(face); front(face);
-					return;
 				}
 				else {
 					printf("B");
 					down(face); frontInverse(face); downInverse(face); front(face);
 					downInverse(face);
 					left(face); down(face); leftInverse(face); //TODO: this could be a trouble spot... good first place to check
-					return;
 				}
 			}
 			else if (edge_position == 0) {
@@ -1329,12 +1301,10 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					printf("C");
 					down(face); frontInverse(face); down(face); down(face); front(face); downInverse(face);
 					left(face); down(face); leftInverse(face);
-					return;
 				}
 				else {
 					printf("D");
 					downInverse(face); frontInverse(face); down(face); front(face);
-					return;
 				}
 			}
 			else if (edge_position == 1) {
@@ -1342,27 +1312,23 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					printf("E");
 					downInverse(face); left(face); downInverse(face); leftInverse(face); down(face);
 					left(face); down(face); leftInverse(face);
-					return;
 				}
 				else {
 					printf("F");
 					left(face); downInverse(face); leftInverse(face); down(face);
 					down(face);
 					frontInverse(face); downInverse(face); front(face);
-					return;
 				}
 			}
 			else if (edge_position == 2) {
 				if (edge_orientation == 0) {
 					printf("G");
 					left(face); down(face); leftInverse(face);
-					return;
 				}
 				else {
 					printf("H");
 					down(face); frontInverse(face); down(face); down(face); front(face);
 					down(face); frontInverse(face); down(face); down(face); front(face);
-					return;
 				}
 			}
 			else if (edge_position == 3) { //TODO: this can technically just be an if --- would only make it harder to read
@@ -1370,13 +1336,11 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					printf("I");
 					downInverse(face); left(face); down(face); leftInverse(face); down(face);
 					left(face); down(face); leftInverse(face);
-					return;
 				}
 				else {
 					printf("J");
 					down(face); frontInverse(face); downInverse(face); front(face);
 					down(face); frontInverse(face); down(face); down(face); front(face);
-					return;
 				}
 			}
 			printf("3\n");
@@ -1395,7 +1359,6 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					down(face);
 					frontInverse(face); down(face); down(face); front(face);
 					down(face); frontInverse(face); down(face); down(face); front(face); //TODO: do i reset the cube orientation for this line... idk man
-					return;
 				}
 			}
 			else if (edge_position == 0) {
@@ -1403,13 +1366,11 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					printf("C");
 					downInverse(); downInverse(); frontInverse(face); down(face); front(face);
 					down(face); left(face); downInverse(face); leftInverse(face);	
-					return;
 				}
 				else {
 					printf("D");
 					down(face); left(face); downInverse(face); leftInverse(face);
 					downInverse(face); frontInverse(face); down(face); front(face);	
-					return;
 				}
 			}
 			else if (edge_position == 1) {
@@ -1417,13 +1378,11 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					printf("E");
 					downInverse(face); frontInverse(face); down(face); front(face);
 					down(face); left(face); downInverse(face); leftInverse(face);	
-					return;
 				}
 				else {
 					printf("F");
 					left(face); downInverse(face); leftInverse(face);
 					downInverse(face); frontInverse(face); down(face); front(face);	
-					return;
 				}
 			}
 			else if (edge_position == 2) {
@@ -1431,13 +1390,11 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					printf("G");
 					frontInverse(face); down(face); front(face);
 					down(face); left(face); downInverse(face); leftInverse(face);	
-					return;
 				}
 				else {
 					printf("H");
 					downInverse(face); left(face); downInverse(face); leftInverse(face);
 					downInverse(face); frontInverse(face); down(face); front(face);	
-					return;
 				}
 			}
 			else if (edge_position == 3) { //TODO: this can technically just be an if --- would only make it harder to read
@@ -1445,13 +1402,11 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					printf("I");
 					down(face); frontInverse(face); down(face); front(face);
 					down(face); left(face); downInverse(face); leftInverse(face);
-					return;
 				}
 				else {
 					printf("J");
 					left(face); downInverse(face); leftInverse(face);
 					downInverse(face); frontInverse(face); down(face); front(face);	
-					return;
 				}
 			}
 			printf("4\n");
@@ -1464,7 +1419,6 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					down(face);
 					frontInverse(face); down(face); down(face); front(face);
 					down(face); frontInverse(face); down(face); down(face); front(face);
-					return;
 				}
 				else {
 					printf("B");
@@ -1472,7 +1426,6 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					down(face);
 					down(face);
 					frontInverse(face); downInverse(face); front(face);
-					return;
 				}
 			}
 			else if (edge_position == 0) {
@@ -1481,13 +1434,11 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					downInverse(face);
 					left(face); down(face); leftInverse(face);
 					downInverse(face); left(face); down(face); leftInverse(face);
-					return;
 				}
 				else {
 					printf("D");
 					frontInverse(face); down(face); front(face);
 					downInverse(face); frontInverse(face); down(face); front(face);
-					return;
 				}
 			}
 			else if (edge_position == 1) {
@@ -1495,14 +1446,12 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					printf("E");
 					left(face); down(face); leftInverse(face);
 					downInverse(face); left(face); down(face); leftInverse(face);
-					return;
 				}
 				else {
 					printf("F");
 					down(face);
 					frontInverse(face); down(face); front(face);
 					downInverse(face); frontInverse(face); down(face); front(face);
-					return;
 				}
 			}
 			else if (edge_position == 2) {
@@ -1511,14 +1460,12 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					down(face);
 					left(face); down(face); leftInverse(face);
 					downInverse(face); left(face); down(face); leftInverse(face);
-					return;
 				}
 				else {
 					printf("H");
 					down(face); down(face);
 					frontInverse(face); down(face); front(face);
 					downInverse(face); frontInverse(face); down(face); front(face);
-					return;
 				}
 			}
 			else if (edge_position == 3) { //TODO: this can technically just be an if --- would only make it harder to read
@@ -1527,14 +1474,12 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					down(face); down(face);
 					left(face); down(face); leftInverse(face);
 					downInverse(face); left(face); down(face); leftInverse(face);
-					return;
 				}
 				else {
 					printf("J");
 					downInverse(face);
 					frontInverse(face); down(face); front(face);
 					downInverse(face); frontInverse(face); down(face); front(face);
-					return;
 				}
 			}
 			printf("5\n");
@@ -1545,7 +1490,6 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					printf("A");
 					left(face); downInverse(face); leftInverse(face); downInverse(face); left(face); down(face); leftInverse(face);
 					downInverse(face); left(face); down(face); down(face); leftInverse(face);
-					return;
 				}
 				else {
 					printf("B");
@@ -1553,7 +1497,6 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					down(face);
 					frontInverse(face); downInverse(face); front(face);
 					downInverse(face); frontInverse(face); downInverse(face); front(face);
-					return;
 				}
 			}
 			else if (edge_position == 0) {
@@ -1562,13 +1505,11 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					downInverse(face);
 					left(face); downInverse(face); leftInverse(face);
 					down(face); left(face); downInverse(face); leftInverse(face);
-					return;
 				}
 				else {
 					printf("D");
 					frontInverse(face); downInverse(face); front(face);
 					down(face); frontInverse(face); downInverse(face); front(face);
-					return;
 				}
 			}
 			else if (edge_position == 1) {
@@ -1576,14 +1517,12 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					printf("E");
 					left(face); downInverse(face); leftInverse(face);
 					down(face); left(face); downInverse(face); leftInverse(face);
-					return;
 				}
 				else {
 					printf("F");
 					down(face);
 					frontInverse(face); downInverse(face); front(face);
 					down(face); frontInverse(face); downInverse(face); front(face);
-					return;
 				}
 			}
 			else if (edge_position == 2) {
@@ -1592,14 +1531,12 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					down(face);
 					left(face); downInverse(face); leftInverse(face);
 					down(face); left(face); downInverse(face); leftInverse(face);
-					return;
 				}
 				else {
 					printf("H");
 					down(face); down(face);
 					frontInverse(face); downInverse(face); front(face);
 					down(face); frontInverse(face); downInverse(face); front(face);
-					return;
 				}
 			}
 			else if (edge_position == 3) { //TODO: this can technically just be an if --- would only make it harder to read
@@ -1608,20 +1545,18 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) { //this is techn
 					down(face); down(face);
 					left(face); downInverse(face); leftInverse(face);
 					down(face); left(face); downInverse(face); leftInverse(face);
-					return;
 				}
 				else {
 					printf("J");
 					downInverse();
 					frontInverse(face); downInverse(face); front(face);
 					down(face); frontInverse(face); downInverse(face); front(face);
-					return;
 				}
 			}
 			printf("6\n");
 		}
 	}
-	printf("FAIL\n");
+	//printf("FAIL\n");
 
 	/*
 	//TODO: update edge_position for the face
