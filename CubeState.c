@@ -2,6 +2,10 @@
 #include <time.h>
 #include <string.h>
 #include <ctype.h>
+#include <termios.h>
+#include <unistd.h>
+#include <errno.h>
+#include <fcntl.h>
 
 typedef enum Cubelet Cubelet;
 enum Cubelet {  WRB, WRG, WOG, WOB, WR, WO, WB, WG, //TODO does this compile to like - enum enum Cubelet { ... ???
@@ -87,10 +91,35 @@ void leftInverse(Cubelet f);
 int checkSolved(); //TODO: move main to the end? or maybe leave this and give brief overview of use? ... idk, something like that
 void rotateLastLayer();
 
-int main(int argc, char* argv[]) {
-	//Do Stuff
-	if (1==2) {
-		int i;
+
+int setSerialPort(int fd, int speed) {
+	struct termios tty;
+	memset(&tty, 0, sizeof tty);
+
+	if (tcgetattr (fd, &tty) != 0) {
+//		error_message("error %d from tcgetattr", errno);
+		return -1;
+	}
+
+	cfsetospeed(&tty, speed);
+	cfsetispeed(&tty, speed);
+	tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8;
+	tty.c_cflag &= ~PARENB;
+	tty.c_cflag &= ~CSTOPB;
+	tty.c_cflag &= ~CRTSCTS;
+
+	tty.c_cc[VMIN] = 1; //OR ZERO - not sure which
+	tty.c_cc[VTIME] = 5;
+
+	if (tcsetattr (fd, TCSANOW, &tty) != 0) {
+//		error_message("error %d from tcsetattr", errno);
+		return -1;
+	}
+
+	return 0;
+}
+void randomizeCube() {
+	int i;
 		srand(time(NULL));
 		for (i=0;i<20;i++) {
 		//sleep(1);
@@ -136,28 +165,45 @@ int main(int argc, char* argv[]) {
 		} //Randomize Cube State
 		strcat(solution, " | ");
 		solutionLen+=3;
-	}
+}
+int main(int argc, char* argv[]) {
+	//Do Stuff
+	/*
+	while (1==1) {
+		randomizeCube();
 
-	if (1==1) {
-		cubeInput(argv[1]);
+		//cubeInput(argv[1]);
 		whiteCross();
 		firstTwoLayers();
 		orientLastLayer();
 		permutateLastLayer();
 		rotateLastLayer();
 		shortenSolution();
-
+	
 		if (checkSolved()) {
-			printf("SOLVED - SOLVED - SOLVED\n");
+			//printf("SOLVED - SOLVED - SOLVED\n");
 		}
 		else {
 			printf("UNSOLVED - UNSOLVED - UNSOLVED\n");
+			printCube(1);
+			return 1;
 		}
-
-		printCube(1);
-		printf("%s\n", solution);
+	
+		//printCube(1);
+		//printf("%s\n", solution);
 	}
+	*/
 
+	//Do Serial Port Stuff
+	char* devicePort = "/dev/ttyUSB1";
+	int fd = open(devicePort, O_RDWR | O_NOCTTY | O_SYNC);
+	if (fd < 0)
+	{
+		printf("\nerror %d opening %s: %s\n", errno, devicePort, strerror(errno));
+		return 1;
+	}
+	setSerialPort(fd, B115200);
+	write(fd, "F", 1);
 	return 0;
 }
 
