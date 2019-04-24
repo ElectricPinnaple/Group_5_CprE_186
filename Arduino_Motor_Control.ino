@@ -10,8 +10,8 @@
 
 
  Created 11 Mar. 2007
- Modified 30 Nov. 2009
- by Tom Igoe
+ Modified 24 Apr. 2019
+ By Shounak L.
 
  */
 
@@ -58,6 +58,21 @@ void loop() {
       back.step(-quarterTurn);
       break;
     case 'L':
+      left.step(quarterTurn);
+    case 'l':
+      left.step(-quarterTurn);
+    case 'U':
+      up.step(quarterTurn);
+    case 'u':
+      up.step(-quarterTurn);    
+    case 'R':
+      right.step(quarterTurn);
+    case 'r':
+      right.step(-quarterTurn);
+    case 'D':
+      down.step(quarterTurn);
+    case 'd':
+      down.step(-quarterTurn);       
     default:
       break;
   }
