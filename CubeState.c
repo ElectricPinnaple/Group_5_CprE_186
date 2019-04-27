@@ -15,6 +15,7 @@ enum Cubelet {  WRB, WRG, WOG, WOB, WR, WO, WB, WG, //TODO does this compile to 
 
 char solution[350] = {0}; //The solution string (Uses Standard Nomenclature for Cubes - Top == White && Front == Green)
 int solutionLen = 0; //Length of the solution string
+int useUp = 0; //TODO: documentarian
 
 Cubelet cP[3][3][3] = { //Positions of the cubes faces
 			{ { WOB,  WB, WRB }, //BACK
@@ -91,13 +92,12 @@ void leftInverse(Cubelet f);
 int checkSolved(); //TODO: move main to the end? or maybe leave this and give brief overview of use? ... idk, something like that
 void rotateLastLayer();
 
-
 int setSerialPort(int fd, int speed) {
 	struct termios tty;
 	memset(&tty, 0, sizeof tty);
 
 	if (tcgetattr (fd, &tty) != 0) {
-//		error_message("error %d from tcgetattr", errno);
+		printf("error %d from tcgetattr", errno);
 		return -1;
 	}
 
@@ -112,98 +112,122 @@ int setSerialPort(int fd, int speed) {
 	tty.c_cc[VTIME] = 5;
 
 	if (tcsetattr (fd, TCSANOW, &tty) != 0) {
-//		error_message("error %d from tcsetattr", errno);
+		printf("error %d from tcsetattr", errno);
 		return -1;
 	}
 
 	return 0;
 }
+
 void randomizeCube() {
 	int i;
 		srand(time(NULL));
 		for (i=0;i<20;i++) {
-		//sleep(1);
-		int r = rand() % 12;
- 		switch (r) {
-			case  0:
-				right(G);
-				break;
-			case  1:
-				left(G);
-				break;
-			case  2:
-				up(G);
-				break;
-			case  3:
-				down(G);
-				break;
-			case  4:
-				front(G);
-				break;
-			case  5:
-				back(G);
-				break;
-			case  6:
-				rightInverse(G);
-				break;
-			case  7:
-				leftInverse(G);
-				break;
-			case  8:
-				upInverse(G);
-				break;
-			case  9:
-				downInverse(G);
-				break;
-			case 10:
-				frontInverse(G);
-				break;
-			case 11:
-				backInverse(G);
-				break;
-		}
+			int r = rand() % 12;
+ 			switch (r) {
+				case  0:
+					right(G);
+					break;
+				case  1:
+					left(G);
+					break;
+				case  2:
+					up(G);
+					break;
+				case  3:
+					down(G);
+					break;
+				case  4:
+					front(G);
+					break;
+				case  5:
+					back(G);
+					break;
+				case  6:
+					rightInverse(G);
+					break;
+				case  7:
+					leftInverse(G);
+					break;
+				case  8:
+					upInverse(G);
+					break;
+				case  9:
+					downInverse(G);
+					break;
+				case 10:
+					frontInverse(G);
+					break;
+				case 11:
+					backInverse(G);
+					break;
+			}
 		} //Randomize Cube State
-		strcat(solution, " | ");
-		solutionLen+=3;
+		//strcat(solution, " | ");
+		//solutionLen+=3;
+		strcpy(solution, "");
+		solutionLen = 0;
 }
 int main(int argc, char* argv[]) {
 	//Do Stuff
-	/*
-	while (1==1) {
-		randomizeCube();
-
-		//cubeInput(argv[1]);
-		whiteCross();
-		firstTwoLayers();
-		orientLastLayer();
-		permutateLastLayer();
-		rotateLastLayer();
-		shortenSolution();
+	if (1==1) {
+			randomizeCube();
 	
-		if (checkSolved()) {
-			//printf("SOLVED - SOLVED - SOLVED\n");
-		}
-		else {
-			printf("UNSOLVED - UNSOLVED - UNSOLVED\n");
-			printCube(1);
+			//cubeInput(argv[1]);
+			whiteCross();
+			firstTwoLayers();
+			orientLastLayer();
+			permutateLastLayer();
+			rotateLastLayer();
+			shortenSolution();
+		
+			if (checkSolved()) {
+				printf("SOLVED - SOLVED - SOLVED\n");
+			}
+			else {
+				printf("UNSOLVED - UNSOLVED - UNSOLVED\n");
+				printCube(1);
+				return 1;
+			}
+		
+			//printCube(1);
+			//printf("%s\n", solution);
+			//printf("%d\n", solutionLen);
+	}
+	//Do Serial Port Stuff
+	if (1==1) {
+		char* devicePort = "/dev/cu.usbmodem14301";
+		int fd = open(devicePort, O_RDWR | O_NOCTTY | O_SYNC);
+		if (fd < 0) {
+			printf("\nerror %d opening %s: %s\n", errno, devicePort, strerror(errno));
 			return 1;
 		}
-	
-		//printCube(1);
-		//printf("%s\n", solution);
-	}
-	*/
+		setSerialPort(fd, B9600);
 
-	//Do Serial Port Stuff
-	char* devicePort = "/dev/ttyUSB1";
-	int fd = open(devicePort, O_RDWR | O_NOCTTY | O_SYNC);
-	if (fd < 0)
-	{
-		printf("\nerror %d opening %s: %s\n", errno, devicePort, strerror(errno));
-		return 1;
+		if (useUp) { printf("PUT THE TOP ON\n"); }
+		unsigned int retTime = time(0) + 3 + (useUp * 45); //45 seconds to put the top on if needed
+    	while (time(0) < retTime);
+
+    	//strcat(solution, "Z");
+    	char send[128];
+
+    	strncpy(send, solution, 63);
+    	printf("%s\n", send);
+    	write(fd, send, 63);
+    	write(fd, "Z", 1);
+
+    	char terminateString[16] = {0};
+    	while (read(fd, terminateString, 16) == 0) {}
+    	read(fd, terminateString, 16);
+
+    	strcpy(send, &solution[63]);
+		printf("%s\n", send);
+    	write(fd, send, strlen(send));
+    	write(fd, "Z", 1);
+    	while (read(fd, terminateString, 16) == 0) {}
+
+    	printf("END PROGRAM\n");
 	}
-	setSerialPort(fd, B115200);
-	write(fd, "F", 1);
 	return 0;
 }
 
@@ -1866,6 +1890,8 @@ void down(){
 void up() {	
 	strcat(solution, "U");
 	solutionLen++;
+
+	useUp = 1; //TODO: this is to tell if the top needs to be placed on top for the solution
 
 	Cubelet tmp;
 	tmp = cP[0][0][0]; cP[0][0][0] = cP[2][0][0]; cP[2][0][0] = cP[2][0][2]; cP[2][0][2] = cP[0][0][2]; cP[0][0][2] = tmp; //Up Position Corner Moves
