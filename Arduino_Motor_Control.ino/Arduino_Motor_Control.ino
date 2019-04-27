@@ -40,10 +40,10 @@ void setup() {
   back.setSpeed(SPEED);
   // initialize the serial port:
   Serial.begin(9600);
+  //Serial.print("READY");
 }
 
 void loop() {
-  //char move = Serial.read();
   switch (Serial.read()) {
     case 'F':
       front.step(quarterTurn);
@@ -59,20 +59,31 @@ void loop() {
       break;
     case 'L':
       left.step(quarterTurn);
+      break;
     case 'l':
       left.step(-quarterTurn);
+      break;
     case 'U':
       up.step(quarterTurn);
+      break;
     case 'u':
-      up.step(-quarterTurn);    
+      up.step(-quarterTurn);
+      break;   
     case 'R':
       right.step(quarterTurn);
+      break;
     case 'r':
       right.step(-quarterTurn);
+      break;
     case 'D':
       down.step(quarterTurn);
+      break;
     case 'd':
-      down.step(-quarterTurn);       
+      down.step(-quarterTurn);
+      break; 
+    case 'Z':
+      Serial.print("DONE");
+      break;  
     default:
       break;
   }
