@@ -7,6 +7,8 @@
 #include <errno.h>
 #include <fcntl.h>
 
+#define DEBUG 1
+#define PRINT_MODE 0
 typedef enum Cubelet Cubelet;
 enum Cubelet {  WRB, WRG, WOG, WOB, WR, WO, WB, WG, //TODO does this compile to like - enum enum Cubelet { ... ???
 				YRB, YRG, YOG, YOB, YR, YO, YB, YG,
@@ -171,31 +173,41 @@ void randomizeCube() {
 int main(int argc, char* argv[]) {
 	//Do Stuff
 	if (1==1) {
+		do {
 			randomizeCube();
 	
 			//cubeInput(argv[1]);
 			whiteCross();
+			if (DEBUG) printCube(PRINT_MODE);
 			firstTwoLayers();
+			if (DEBUG) printCube(PRINT_MODE);
 			orientLastLayer();
+			if (DEBUG) printCube(PRINT_MODE);
 			permutateLastLayer();
+			if (DEBUG) printCube(PRINT_MODE);
 			rotateLastLayer();
 			shortenSolution();
+			if (!DEBUG) printCube(PRINT_MODE);
 		
 			if (checkSolved()) {
 				printf("SOLVED - SOLVED - SOLVED\n");
 			}
 			else {
 				printf("UNSOLVED - UNSOLVED - UNSOLVED\n");
-				printCube(1);
 				return 1;
 			}
 		
-			//printCube(1);
 			//printf("%s\n", solution);
 			//printf("%d\n", solutionLen);
+			if (DEBUG) printf("\n-----------------------------------------------------\n\n");
+			if (DEBUG) {
+				unsigned int retTime = time(0) + 1;
+    			while (time(0) < retTime);
+    		}
+		} while (DEBUG);
 	}
 	//Do Serial Port Stuff
-	if (1==1) {
+	if (1==2) {
 		char* devicePort = "/dev/cu.usbmodem14301";
 		int fd = open(devicePort, O_RDWR | O_NOCTTY | O_SYNC);
 		if (fd < 0) {
@@ -269,381 +281,385 @@ void permutateLastLayer() { //TODO: this whole thing can drop checking the cente
 			  {  YB,   Y,  YG },
 			  { YRB,  YR, YRG }
 			} }; //TODO: remove the trailing down's because they are not helpful at all
-	printf("PLL - ");
+	if (DEBUG) printf("PLL - ");
 	int i,j;
 	for (i=0; i<4; i++) {
 		for (j=0; j<4; j++) {
 			if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2] //1
 			 && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
 			 && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
-				printf("XX\n");	
+				if (DEBUG) printf("XX\n");	
+				//Last layer is already solved
 				return;
 			}	
 			else if (cP[0][2][2] == locations[i][0][2] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][2][2] //1
-			 && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
-			 && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][0][0]) {
-				printf("AA\n");	
+				  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
+				  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][0][0]) {
+				if (DEBUG) printf("AA\n");	
 				leftInverse(G); front(G); leftInverse(G); back(G); back(G); left(G); frontInverse(G); leftInverse(G); back(G); back(G); left(G); left(G);
 				return;
 			}
 			else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][2][0] //2
 				  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
 				  && cP[2][2][2] == locations[i][2][2] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][0][2]) {
-				printf("BB\n");	
+				if (DEBUG) printf("BB\n");	
 				left(G); backInverse(G); left(G); front(G); front(G); leftInverse(G); back(G); left(G); front(G); front(G); left(G); left(G);
 				return;
 			}
 			else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2] //3
 				  && cP[1][2][2] == locations[i][1][2] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][2][1]
 				  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][1][0] && cP[2][2][0] == locations[i][2][2]) {
-				printf("CC\n");	
+				if (DEBUG) printf("CC\n");	
 				left(G); left(G); down(G); left(G); down(G); leftInverse(G); downInverse(G); leftInverse(G); downInverse(G); leftInverse(G); down(G); leftInverse(G);
 				return;
 			}
 			else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2] //4
 				  && cP[1][2][2] == locations[i][2][1] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][0]
 				  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][1][2] && cP[2][2][0] == locations[i][2][2]) {
-				printf("DD\n");	
+				if (DEBUG) printf("DD\n");	
 				left(G); downInverse(G); left(G); down(G); left(G); down(G); left(G); downInverse(G); leftInverse(G); downInverse(G); left(G); left(G);
 				return;
 			}
 			else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][2][1] && cP[0][2][0] == locations[i][0][2] //5
 				  && cP[1][2][2] == locations[i][1][2] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][0]
 				  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][0][1] && cP[2][2][0] == locations[i][2][2]) {
-				printf("EE\n");	
+				if (DEBUG) printf("EE\n");	
 				left(G); left(G); rightInverse(G); rightInverse(G); up(G); left(G); left(G); rightInverse(G); rightInverse(G); down(G); down(G); left(G); left(G); rightInverse(G); rightInverse(G); up(G); left(G); left(G); rightInverse(G); rightInverse(G);
 				return;
 			}
 			else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][2][2] //6
 				  && cP[1][2][2] == locations[i][1][2] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][0]
 				  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][0][2]) {
-				printf("FF\n");	
+				if (DEBUG) printf("FF\n");	
 				left(G); down(G); leftInverse(G); downInverse(G); leftInverse(G); front(G); left(G); left(G); downInverse(G); leftInverse(G); downInverse(G); left(G); down(G); leftInverse(G); frontInverse(G);
 				return;
 			}
 			else if (cP[0][2][2] == locations[i][0][2] && cP[0][2][1] == locations[i][1][0] && cP[0][2][0] == locations[i][0][0] //7
 				  && cP[1][2][2] == locations[i][0][1] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
 				  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
-				printf("GG\n");
+				if (DEBUG) printf("GG\n");
 				leftInverse(G); down(G); rightInverse(G); down(G); down(G); left(G); downInverse(G); leftInverse(G); down(G); down(G); left(G); right(G); downInverse(G);
 				return;
 			}
 			else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][2][2] //8
 				  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][2][1]
 				  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][1][2] && cP[2][2][0] == locations[i][0][2]) {
-				printf("HH\n");	
+				if (DEBUG) printf("HH\n");	
 				left(G); down(G); leftInverse(G); frontInverse(G); left(G); down(G); leftInverse(G); downInverse(G); leftInverse(G); front(G); left(G); left(G); downInverse(G); leftInverse(G); downInverse(G);
 				return;
 			}
 			else if (cP[0][2][2] == locations[i][0][2] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][0] //9
 				  && cP[1][2][2] == locations[i][2][1] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
 				  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][1][0] && cP[2][2][0] == locations[i][2][2]) {
-				printf("II\n");	
+				if (DEBUG) printf("II\n");	
 				right(G); down(G); down(G); rightInverse(G); down(G); down(G); right(G); frontInverse(G); rightInverse(G); downInverse(G); right(G); down(G); right(G); front(G); right(G); right(G); down(G);
 				return;
 			}
 			else if (cP[0][2][2] == locations[i][0][2] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][0] //10
 				  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][2][1]
 				  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][1][2] && cP[2][2][0] == locations[i][2][2]) {
-				printf("JJ\n");	
+				if (DEBUG) printf("JJ\n");	
 				leftInverse(G); down(G); down(G); left(G); down(G); down(G); leftInverse(G); front(G); left(G); down(G); leftInverse(G); downInverse(G); leftInverse(G); frontInverse(G); left(G); left(G); downInverse(G);
 				return;
 			}
 			else if (cP[0][2][2] == locations[i][2][2] && cP[0][2][1] == locations[i][1][2] && cP[0][2][0] == locations[i][0][2] //11
 				  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][0][1]
 				  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][0][0]) {
-				printf("KK\n");	
+				if (DEBUG) printf("KK\n");	
 				leftInverse(G); down(G); leftInverse(G); downInverse(G); backInverse(G); leftInverse(G); back(G); back(G); downInverse(G); backInverse(G); down(G); backInverse(G); left(G); back(G); left(G);
 				return;
 			}
 			else if (cP[0][2][2] == locations[i][0][2] && cP[0][2][1] == locations[i][1][0] && cP[0][2][0] == locations[i][2][0] //12
 				  && cP[1][2][2] == locations[i][1][2] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][0][1]
 				  && cP[2][2][2] == locations[i][0][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][2]) {
-				printf("LL\n");	
+				if (DEBUG) printf("LL\n");	
 				left(G); left(G); up(G); backInverse(G); down(G); backInverse(G); downInverse(G); back(G); upInverse(G); left(G); left(G); frontInverse(G); down(G); front(G);
 				return;
 			}
 			else if (cP[0][2][2] == locations[i][2][0] && cP[0][2][1] == locations[i][2][1] && cP[0][2][0] == locations[i][0][2] //13
 				  && cP[1][2][2] == locations[i][0][1] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
 				  && cP[2][2][2] == locations[i][2][2] && cP[2][2][1] == locations[i][1][0] && cP[2][2][0] == locations[i][0][0]) {
-				printf("MM\n");	
+				if (DEBUG) printf("MM\n");	
 				leftInverse(G); downInverse(G); left(G); back(G); back(G); up(G); rightInverse(G); down(G); right(G); downInverse(G); right(G); upInverse(G); back(G); back(G);
 				return;
 			}
 			else if (cP[0][2][2] == locations[i][2][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2] //14
 				  && cP[1][2][2] == locations[i][1][2] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][2][1]
 				  && cP[2][2][2] == locations[i][2][2] && cP[2][2][1] == locations[i][1][0] && cP[2][2][0] == locations[i][0][0]) {
-				printf("NN\n");	
+				if (DEBUG) printf("NN\n");	
 				left(G); left(G); upInverse(G); front(G); downInverse(G); front(G); down(G); frontInverse(G); up(G); left(G); left(G); back(G); downInverse(G); backInverse(G);
 				return;
 			}
 			else if (cP[0][2][2] == locations[i][0][2] && cP[0][2][1] == locations[i][1][0] && cP[0][2][0] == locations[i][2][0] //15
 				  && cP[1][2][2] == locations[i][2][1] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
 				  && cP[2][2][2] == locations[i][0][0] && cP[2][2][1] == locations[i][0][1] && cP[2][2][0] == locations[i][2][2]) {
-				printf("OO\n");	
+				if (DEBUG) printf("OO\n");	
 				left(G); down(G); leftInverse(G); front(G); front(G); upInverse(G); right(G); downInverse(G); rightInverse(G); down(G); rightInverse(G); up(G); front(G); front(G);
 				return;
 			}
 			else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][0][2] //16
 				  && cP[1][2][2] == locations[i][1][2] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][0]
 				  && cP[2][2][2] == locations[i][2][2] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][2][0]) {
-				printf("PP\n");	
+				if (DEBUG) printf("PP\n");	
 				leftInverse(G); down(G); down(G); leftInverse(G); downInverse(G); backInverse(G); leftInverse(G); back(G); back(G); downInverse(G); backInverse(G); down(G); backInverse(G); left(G); back(G); downInverse(G); left(G);
 				return;
 			}
 			else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][1][0] && cP[0][2][0] == locations[i][0][2] //17
 				  && cP[1][2][2] == locations[i][0][1] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][2][1]
 				  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][1][2] && cP[2][2][0] == locations[i][2][2]) {
-				printf("QQ\n");	
+				if (DEBUG) printf("QQ\n");	
 				left(G); left(G); rightInverse(G); rightInverse(G); up(G); left(G); left(G); rightInverse(G); rightInverse(G); down(G); leftInverse(G); right(G); front(G); front(G); left(G); left(G); rightInverse(G); rightInverse(G); back(G); back(G); leftInverse(G); right(G); down(G); down(G);
 				return;
 			}
 			else if (cP[0][2][2] == locations[i][2][2] && cP[0][2][1] == locations[i][1][0] && cP[0][2][0] == locations[i][0][2] //18
 				  && cP[1][2][2] == locations[i][0][1] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
 				  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][0][0]) {
-				printf("RR\n");
+				if (DEBUG) printf("RR\n");
 				front(G); left(G); downInverse(G); leftInverse(G); downInverse(G); left(G); down(G); leftInverse(G); frontInverse(G); left(G); down(G); leftInverse(G); downInverse(G); leftInverse(G); front(G); left(G); frontInverse(G);	
 				return;
 			}
 			else if (cP[0][2][2] == locations[i][2][2] && cP[0][2][1] == locations[i][2][1] && cP[0][2][0] == locations[i][0][2] //19
 				  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
 				  && cP[2][2][2] == locations[i][2][0] && cP[2][2][1] == locations[i][0][1] && cP[2][2][0] == locations[i][0][0]) {
-				printf("SS\n");	
+				if (DEBUG) printf("SS\n");	
 				right(G); downInverse(G); left(G); down(G); down(G); rightInverse(G); down(G); leftInverse(G); right(G); downInverse(G); left(G); down(G); down(G); rightInverse(G); down(G); leftInverse(G); down(G);
 				return;
 			}
 			else if (cP[0][2][2] == locations[i][0][0] && cP[0][2][1] == locations[i][2][1] && cP[0][2][0] == locations[i][2][0] //20
 				  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
 				  && cP[2][2][2] == locations[i][0][2] && cP[2][2][1] == locations[i][0][1] && cP[2][2][0] == locations[i][2][2]) {
-				printf("TT\n");	
+				if (DEBUG) printf("TT\n");	
 				leftInverse(G); down(G); rightInverse(G); down(G); down(G); left(G); downInverse(G); right(G); leftInverse(G); down(G); rightInverse(G); down(G); down(G); left(G); downInverse(G); right(G); downInverse(G);
 				return;
 			}
 			else if (cP[0][2][2] == locations[i][2][0] && cP[0][2][1] == locations[i][0][1] && cP[0][2][0] == locations[i][2][2] //21 //This can be changed to just an else
 				  && cP[1][2][2] == locations[i][1][0] && cP[1][2][1] == locations[i][1][1] && cP[1][2][0] == locations[i][1][2]
 				  && cP[2][2][2] == locations[i][0][0] && cP[2][2][1] == locations[i][2][1] && cP[2][2][0] == locations[i][0][2]) {
-				printf("UU\n");	
+				if (DEBUG) printf("UU\n");	
 				left(G); backInverse(G); leftInverse(G); front(G); left(G); back(G); leftInverse(G); front(G); front(G); rightInverse(G); back(G); right(G); front(G); rightInverse(G); backInverse(G); right(G);
 				return;
 			}
-			down(G);
+
+			down(G); //Rotate the last layer to look for a matching algorithm again.
 		}
 	}
-	printf("FAIL\n");
+	if (DEBUG) printf("FAIL\n");
 }
 
 void orientLastLayer() {
-	printf("OLL - ");
+	if (DEBUG) printf("OLL - ");
 	int i;
 	for (i=0; i<4; i++) {
 		if    (cF[7][4] == Y && cF[9][4] == Y && cF[5][0] == Y && cF[5][1] == Y
 			&& cF[5][2] == Y && cF[5][4] == Y && cF[5][6] == Y && cF[5][7] == Y && cF[5][8] == Y) {
-			printf("AA\n");
+			if (DEBUG) printf("AA\n");
 			left(G); down(G); backInverse(G); left(G); back(G); leftInverse(G); leftInverse(G); downInverse(G); leftInverse(G); front(G); left(G); frontInverse(G);
 			return;	
 		}
 		else if (cF[7][4] == Y && cF[9][4] == Y && cF[5][0] == Y && cF[5][1] == Y
 			  && cF[5][3] == Y && cF[5][4] == Y && cF[5][5] == Y && cF[5][7] == Y && cF[5][8] == Y) {
-			printf("BB\n");
+			if (DEBUG) printf("BB\n");
 			leftInverse(G); front(G); left(G); frontInverse(G); down(G); down(G); leftInverse(G); front(G); left(G); front(G); front(G); down(G); down(G); front(G);
 			return;	
 		}
 		else if (cF[7][4] == Y && cF[6][3] == Y && cF[9][5] == Y && cF[9][4] == Y && cF[5][0] == Y && cF[5][1] == Y
 			  && cF[5][4] == Y && cF[5][6] == Y && cF[5][7] == Y) {
-			printf("CC\n");
+			if (DEBUG) printf("CC\n");
 			frontInverse(G); back(G); back(G); right(G); backInverse(G); right(G); front(G); down(G); down(G); frontInverse(G); right(G); front(G); backInverse(G);
 			return;	
 		}
 		else if (cF[8][3] == Y && cF[7][4] == Y && cF[9][4] == Y && cF[5][1] == Y
 			  && cF[5][2] == Y && cF[5][4] == Y && cF[5][5] == Y && cF[5][7] == Y && cF[5][8] == Y) {
-			printf("DD\n");
+			if (DEBUG) printf("DD\n");
 			leftInverse(G); down(G); down(G); leftInverse(G); front(G); left(G); frontInverse(G); downInverse(G); frontInverse(G); downInverse(G); front(G); downInverse(G); left(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[7][4] == Y && cF[6][3] == Y && cF[9][4] == Y && cF[9][3] == Y && cF[5][1] == Y
 			  && cF[5][4] == Y && cF[5][6] == Y && cF[5][7] == Y) {
-			printf("EE\n");
+			if (DEBUG) printf("EE\n");
 			left(G); down(G); leftInverse(G); down(G); leftInverse(G); front(G); left(G); frontInverse(G); down(G); down(G); leftInverse(G); front(G); left(G); frontInverse(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][3] == Y && cF[7][4] == Y && cF[6][5] == Y
 			  && cF[6][3] == Y && cF[9][4] == Y && cF[5][1] == Y
 			  && cF[5][4] == Y && cF[5][7] == Y) {
-			printf("FF\n");
+			if (DEBUG) printf("FF\n");
 			right(G); leftInverse(G); front(G); front(G); rightInverse(G); left(G); down(G); down(G); right(G); leftInverse(G); front(G); rightInverse(G); left(G); down(G); down(G); right(G); leftInverse(G); front(G); front(G); rightInverse(G); left(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][3] == Y && cF[7][4] == Y && cF[9][4] == Y && cF[5][1] == Y
 			  && cF[5][2] == Y && cF[5][4] == Y && cF[5][6] == Y && cF[5][7] == Y) {
-			printf("GG\n");
+			if (DEBUG) printf("GG\n");
 			leftInverse(G); down(G); down(G); front(G); left(G); down(G); leftInverse(G); downInverse(G); front(G); front(G); down(G); down(G); front(G); left(G);
 			return;	
 		}
 		else if (cF[7][4] == Y && cF[6][5] == Y
 			  && cF[6][3] == Y && cF[9][5] == Y && cF[9][4] == Y && cF[9][3] == Y && cF[5][1] == Y
 			  && cF[5][4] == Y && cF[5][7] == Y) {
-			printf("HH\n");
+			if (DEBUG) printf("HH\n");
 			front(G); left(G); down(G); leftInverse(G); down(G); frontInverse(G); down(G); down(G); frontInverse(G); right(G); front(G); rightInverse(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[7][4] == Y && cF[6][4] == Y && cF[9][5] == Y && cF[5][0] == Y && cF[5][1] == Y
 			  && cF[5][2] == Y && cF[5][5] == Y && cF[5][7] == Y) {
-			printf("II\n");
+			if (DEBUG) printf("II\n");
 			leftInverse(G); downInverse(G); frontInverse(G); down(G); frontInverse(G); right(G); front(G); rightInverse(G); front(G); left(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[7][4] == Y && cF[6][4] == Y && cF[5][0] == Y && cF[5][1] == Y
 			  && cF[5][2] == Y && cF[5][6] == Y && cF[5][7] == Y && cF[5][8] == Y) {
-			printf("JJ\n");
+			if (DEBUG) printf("JJ\n");
 			left(G); downInverse(G); back(G); back(G); up(G); backInverse(G); down(G); down(G); back(G); upInverse(G); back(G); back(G); down(G); leftInverse(G);
 			return;	
 		} 
 		else if (cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[9][5] == Y && cF[9][4] == Y && cF[5][0] == Y
 			  && cF[5][2] == Y && cF[5][4] == Y && cF[5][5] == Y) {
-			printf("KK\n");
+			if (DEBUG) printf("KK\n");
 			front(G); down(G); left(G); downInverse(G); leftInverse(G); down(G); left(G); downInverse(G); leftInverse(G); frontInverse(G);
 			return;	//11
 		}
 		else if (cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[9][4] == Y && cF[5][0] == Y
 			  && cF[5][2] == Y && cF[5][4] == Y && cF[5][6] == Y && cF[5][8] == Y) {
-			printf("LL\n");
+			if (DEBUG) printf("LL\n");
 			rightInverse(G); backInverse(G); right(G); downInverse(G); leftInverse(G); down(G); left(G); downInverse(G); leftInverse(G); down(G); left(G); rightInverse(G); back(G); right(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][4] == Y && cF[9][5] == Y && cF[5][0] == Y
 			  && cF[5][2] == Y && cF[5][5] == Y) {
-			printf("MM\n");
+			if (DEBUG) printf("MM\n");
 			right(G); downInverse(G); leftInverse(G); down(G); rightInverse(G); down(G); left(G); down(G); leftInverse(G); down(G); left(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][4] == Y && cF[5][0] == Y
 			  && cF[5][2] == Y && cF[5][6] == Y && cF[5][8] == Y) {
-			printf("NN\n");
+			if (DEBUG) printf("NN\n");
 			left(G); down(G); leftInverse(G); down(G); left(G); downInverse(G); leftInverse(G); down(G); left(G); down(G); down(G); leftInverse(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][4] == Y && cF[6][3] == Y && cF[9][3] == Y && cF[5][5] == Y  && cF[5][8] == Y) {
-			printf("OO\n");
+			if (DEBUG) printf("OO\n");
 			rightInverse(G); down(G); left(G); downInverse(G); right(G); down(G); leftInverse(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][4] == Y && cF[6][3] == Y && cF[9][5] == Y && cF[5][0] == Y && cF[5][6] == Y) {
-			printf("PP\n");
+			if (DEBUG) printf("PP\n");
 			leftInverse(G); down(G); down(G); left(G); down(G); leftInverse(G); down(G); left(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y //17
 			  && cF[6][4] == Y && cF[9][3] == Y && cF[5][3] == Y) {
-			printf("QQ\n");
+			if (DEBUG) printf("QQ\n");
 			leftInverse(G); frontInverse(G); right(G); front(G); left(G); frontInverse(G); rightInverse(G); front(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][4] == Y && cF[8][3] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][4] == Y && cF[5][3] == Y && cF[5][5] == Y) {
-			printf("RR\n");
+			if (DEBUG) printf("RR\n");
 			left(G); left(G); up(G); leftInverse(G); down(G); down(G); left(G); upInverse(G); leftInverse(G); down(G); down(G); leftInverse(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][4] == Y && cF[6][3] == Y && cF[9][3] == Y && cF[5][6] == Y) {
-			printf("SS\n");
+			if (DEBUG) printf("SS\n");
 			leftInverse(G); frontInverse(G); rightInverse(G); front(G); left(G); frontInverse(G); right(G); front(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][3] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[6][5] == Y //20
 			  && cF[6][4] == Y && cF[6][3] == Y && cF[9][4] == Y && cF[5][1] == Y) {
-			printf("TT\n");
+			if (DEBUG) printf("TT\n");
 			leftInverse(G); right(G); frontInverse(G); left(G); rightInverse(G); down(G); down(G); leftInverse(G); right(G); frontInverse(G); left(G); rightInverse(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][3] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y
 			  && cF[6][3] == Y && cF[9][4] == Y && cF[5][4] == Y) {
-			printf("UU\n");
+			if (DEBUG) printf("UU\n");
 			rightInverse(G); left(G); down(G); leftInverse(G); downInverse(G); right(G); leftInverse(G); front(G); left(G); frontInverse(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[6][5] == Y
 			  && cF[9][5] == Y && cF[5][0] == Y && cF[5][1] == Y
 			  && cF[5][3] == Y && cF[5][4] == Y) {
-			printf("VV\n");
+			if (DEBUG) printf("VV\n");
 			right(G); front(G); leftInverse(G); front(G); left(G); front(G); front(G); rightInverse(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[6][3] == Y && cF[5][0] == Y && cF[5][1] == Y
 			  && cF[5][4] == Y && cF[5][5] == Y) {
-			printf("WW\n");
+			if (DEBUG) printf("WW\n");
 			front(G); leftInverse(G); frontInverse(G); left(G); down(G); left(G); downInverse(G); leftInverse(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][4] == Y && cF[5][2] == Y && cF[5][5] == Y
 			  && cF[5][7] == Y && cF[9][3] == Y && cF[9][4] == Y) {
-			printf("XX\n");
-			leftInverse(G); downInverse(G); left(G); front(G); rightInverse(G); frontInverse(G); up(G); front(G); right(G); frontInverse(G);
+			if (DEBUG) printf("XX\n"); //TODO: FIX
+			leftInverse(G); downInverse(G); left(G); front(G); leftInverse(G); frontInverse(G); down(G); front(G); left(G); frontInverse(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][3] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][4] == Y && cF[9][4] == Y && cF[5][5] == Y && cF[5][3] == Y
 			  && cF[5][7] == Y) {
-			printf("YY\n");
+			if (DEBUG) printf("YY\n"); //TODO: FIX
 			downInverse(G); left(G); down(G); down(G); leftInverse(G); downInverse(G); left(G); downInverse(G); left(G); left(G); frontInverse(G); downInverse(G); front(G); down(G); left(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[9][3] == Y && cF[5][1] == Y
 			  && cF[5][3] == Y && cF[5][4] == Y && cF[5][6] == Y && cF[5][8] == Y) {
-			printf("ZZ\n");
+			if (DEBUG) printf("ZZ\n");
 			front(G); left(G); down(G); leftInverse(G); downInverse(G); left(G); down(G); leftInverse(G); downInverse(G); frontInverse(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[9][5] == Y && cF[9][3] == Y && cF[5][1] == Y
 			  && cF[5][3] == Y && cF[5][4] == Y && cF[5][5] == Y) {
-			printf("aa\n");
+			if (DEBUG) printf("aa\n");
 			right(G); frontInverse(G); rightInverse(G); front(G); down(G); down(G); right(G); right(G); back(G); right(G); backInverse(G); right(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y
 			  && cF[6][3] == Y && cF[9][5] == Y && cF[9][3] == Y && cF[5][4] == Y && cF[5][7] == Y) {
-			printf("bb\n");
+			if (DEBUG) printf("bb\n");
 			downInverse(G); leftInverse(G); down(G); down(G); left(G); down(G); leftInverse(G); down(G); left(G); left(G); back(G); down(G); backInverse(G); downInverse(G); leftInverse(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[8][3] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[5][2] == Y 
 			  && cF[5][4] == Y && cF[5][5] == Y && cF[5][7] == Y && cF[5][8] == Y) {
-			printf("cc\n");
+			if (DEBUG) printf("cc\n");
 			right(G); front(G); front(G); leftInverse(G); frontInverse(G); left(G); frontInverse(G); rightInverse(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[8][3] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y //30
 			  && cF[9][5] == Y && cF[5][2] == Y && cF[5][4] == Y && cF[5][7] == Y) {
-			printf("dd\n");
-			frontInverse(G); rightInverse(G); downInverse(G); right(G); down(G); rightInverse(G); downInverse(G); right(G); down(G); front(G);
+			if (DEBUG) printf("dd\n");
+			leftInverse(G); down(G); down(G); left(G); left(G); backInverse(G); leftInverse(G); back(G); leftInverse(G); down(G); down(G); left(G);
+			//frontInverse(G); rightInverse(G); downInverse(G); right(G); down(G); rightInverse(G); downInverse(G); right(G); down(G); front(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[9][5] == Y && cF[5][0] == Y
 			  && cF[5][2] == Y && cF[5][4] == Y && cF[5][5] == Y && cF[5][7] == Y) {
-			printf("ee\n");
-			leftInverse(G); down(G); down(G); left(G); left(G); backInverse(G); leftInverse(G); back(G); leftInverse(G); down(G); down(G); left(G);
+			if (DEBUG) printf("ee\n");
+			frontInverse(G); rightInverse(G); downInverse(G); right(G); down(G); rightInverse(G); downInverse(G); right(G); down(G); front(G);
+			//leftInverse(G); down(G); down(G); left(G); left(G); backInverse(G); leftInverse(G); back(G); leftInverse(G); down(G); down(G); left(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[9][3] == Y
 			  && cF[5][3] == Y && cF[5][4] == Y && cF[5][6] == Y && cF[5][7] == Y && cF[5][8] == Y) {
-			printf("ff\n");
-			leftInverse(G); front(G); left(G); frontInverse(G); down(G); down(G); left(G); left(G); backInverse(G); leftInverse(G); back(G); leftInverse(G);
+			if (DEBUG) printf("ff\n");
+			leftInverse(G); front(G); leftInverse(G); frontInverse(G); left(G); left(G); down(G); down(G); backInverse(G); left(G); back(G); leftInverse(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[9][5] == Y && cF[9][3] == Y //Possible misordering or things... just watch it
 			  && cF[5][3] == Y && cF[5][4] == Y && cF[5][5] == Y && cF[5][7] == Y) {
-			printf("gg\n");
-			leftInverse(G); front(G); leftInverse(G); frontInverse(G); left(G); left(G); down(G); down(G); backInverse(G); left(G); back(G); leftInverse(G);
+			if (DEBUG) printf("gg\n");
+			leftInverse(G); front(G); left(G); frontInverse(G); down(G); down(G); left(G); left(G); backInverse(G); leftInverse(G); back(G); leftInverse(G);
 			return;	
 		}
 		else if (cF[8][3] == Y && cF[7][5] == Y && cF[7][4] == Y
 			  && cF[6][4] == Y && cF[9][5] == Y && cF[9][4] == Y && cF[5][1] == Y
 			  && cF[5][3] == Y && cF[5][6] == Y) {
-			printf("hh\n");
+			if (DEBUG) printf("hh\n");
 			left(G); down(G); leftInverse(G); backInverse(G); left(G); back(G); downInverse(G); backInverse(G); leftInverse(G); back(G);
 			return;	
 		}
@@ -656,155 +672,161 @@ void orientLastLayer() {
 		}
 		else if (cF[7][5] == Y && cF[7][4] == Y && cF[6][4] == Y && cF[6][3] == Y && cF[9][4] == Y && cF[9][3] == Y && cF[5][1] == Y
 			  && cF[5][5] == Y && cF[5][8] == Y) {
-			printf("jj\n");
-			down(G); down(G); right(G); leftInverse(G); leftInverse(G); frontInverse(G); left(G); frontInverse(G); leftInverse(G); front(G); front(G); left(G); frontInverse(G); right(G); leftInverse(G);
+			if (DEBUG) printf("jj\n");
+			down(G); down(G); right(G); leftInverse(G); leftInverse(G); frontInverse(G); left(G); frontInverse(G); leftInverse(G); front(G); front(G); left(G); frontInverse(G); rightInverse(G); left(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][3] == Y && cF[7][5] == Y && cF[7][4] == Y
 			  && cF[6][4] == Y && cF[9][4] == Y && cF[5][1] == Y
 			  && cF[5][2] == Y && cF[5][6] == Y) {
-			printf("kk\n");
+			if (DEBUG) printf("kk\n");
 			backInverse(G); left(G); backInverse(G); left(G); left(G); down(G); left(G); down(G); leftInverse(G); downInverse(G); left(G); back(G); back(G);
 			return;	
 		}
 		else if (cF[7][4] == Y && cF[7][3] == Y && cF[6][4] == Y && cF[9][4] == Y && cF[9][3] == Y
 			  && cF[5][3] == Y && cF[5][6] == Y && cF[5][7] == Y && cF[5][8] == Y) {
-			printf("ll\n");
+			if (DEBUG) printf("ll\n");
 			right(G); downInverse(G); frontInverse(G); down(G); down(G); frontInverse(G); down(G); front(G); downInverse(G); front(G); down(G); down(G); front(G); downInverse(G); rightInverse(G);
 			return;	
 		}
 		else if (cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y
 			  && cF[6][4] == Y && cF[9][5] == Y && cF[9][4] == Y
 			  && cF[5][0] == Y && cF[5][3] == Y && cF[5][7] == Y) {
-			printf("mm\n");
+			if (DEBUG) printf("mm\n");
 			down(G); down(G); leftInverse(G); right(G); right(G); front(G); rightInverse(G); front(G); right(G); front(G); front(G); rightInverse(G); front(G); left(G); rightInverse(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][3] == Y && cF[7][4] == Y && cF[7][3] == Y //40
 			  && cF[6][4] == Y && cF[9][4] == Y
 			  && cF[5][2] == Y && cF[5][6] == Y && cF[5][7] == Y) {
-			printf("nnn\n");
-			rightInverse(G); back(G); back(G); left(G); back(G); leftInverse(G); back(G); right(G);
+			if (DEBUG) printf("nn\n");
+			leftInverse(G); leftInverse(G); down(G); leftInverse(G); backInverse(G); left(G); downInverse(G); leftInverse(G); leftInverse(G); down(G); left(G); back(G); leftInverse(G);
+			//rightInverse(G); back(G); back(G); left(G); back(G); leftInverse(G); back(G); right(G);
 			return;	
 		}
 		else if (cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][4] == Y && cF[6][3] == Y && cF[9][5] == Y && cF[9][4] == Y && cF[5][0] == Y
 			  && cF[5][6] == Y && cF[5][7] == Y) {
-			printf("oo\n");
-			left(G); left(G); down(G); leftInverse(G); backInverse(G); left(G); downInverse(G); left(G); left(G); down(G); left(G); front(G); leftInverse(G);
+			if (DEBUG) printf("oo\n");
+			rightInverse(G); back(G); back(G); left(G); back(G); leftInverse(G); back(G); right(G);
+			//left(G); left(G); down(G); leftInverse(G); backInverse(G); left(G); downInverse(G); left(G); left(G); down(G); left(G); front(G); leftInverse(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][4] == Y && cF[7][4] == Y && cF[6][5] == Y
 			  && cF[6][4] == Y && cF[5][0] == Y && cF[5][1] == Y
 			  && cF[5][2] == Y && cF[5][7] == Y) {
-			printf("pp\n");
+			if (DEBUG) printf("pp\n");
 			left(G); down(G); left(G); backInverse(G); leftInverse(G); back(G); downInverse(G); leftInverse(G);
 			return;	
 		}
 		else if (cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y
 			  && cF[6][3] == Y && cF[9][4] == Y && cF[5][0] == Y
 			  && cF[5][4] == Y && cF[5][8] == Y) {
-			printf("qq\n");
+			if (DEBUG) printf("qq\n");
 			left(G); down(G); leftInverse(G); downInverse(G); backInverse(G); leftInverse(G); front(G); left(G); frontInverse(G); back(G);
 			return;	
 		}
 		else if (cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][3] == Y && cF[9][4] == Y && cF[9][3] == Y
 			  && cF[5][4] == Y && cF[5][5] == Y && cF[5][8] == Y) {
-			printf("rr\n");
+			if (DEBUG) printf("rr\n");
 			leftInverse(G); front(G); left(G); down(G); leftInverse(G); frontInverse(G); left(G); front(G); downInverse(G); frontInverse(G);
 			return;	
 		}
 		else if (cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y
 			  && cF[9][5] == Y && cF[9][4] == Y && cF[5][0] == Y
 			  && cF[5][3] == Y && cF[5][4] == Y) {
-			printf("ss\n");
+			if (DEBUG) printf("ss\n");
 			right(G); frontInverse(G); rightInverse(G); downInverse(G); right(G); front(G); rightInverse(G); frontInverse(G); down(G); front(G);
 			return;	
 		}
 		else if (cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][3] == Y && cF[9][5] == Y && cF[9][4] == Y && cF[5][0] == Y
 			  && cF[5][4] == Y && cF[5][6] == Y) {
-			printf("tt\n");
+			if (DEBUG) printf("tt\n");
 			rightInverse(G); backInverse(G); right(G); leftInverse(G); downInverse(G); left(G); down(G); rightInverse(G); back(G); right(G);
 			return;	
 		}
 		else if (cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[8][3] == Y
 			  && cF[9][4] == Y && cF[5][5] == Y
 			  && cF[5][2] == Y && cF[5][4] == Y && cF[5][8] == Y) {
-			printf("uu\n");
-			left(G); back(G); leftInverse(G); right(G); down(G); rightInverse(G); downInverse(G); left(G); backInverse(G); rightInverse(G);
+			if (DEBUG) printf("uu\n"); //TODO: FIX
+			left(G); back(G); leftInverse(G); right(G); down(G); rightInverse(G); downInverse(G); left(G); backInverse(G); leftInverse(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[6][5] == Y
 			  && cF[5][0] == Y && cF[5][1] == Y
 			  && cF[5][2] == Y && cF[5][4] == Y) {
-			printf("vv\n");
+			if (DEBUG) printf("vv\n");
 			front(G); down(G); left(G); downInverse(G); leftInverse(G); frontInverse(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[8][3] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][3] == Y && cF[9][5] == Y && cF[5][4] == Y && cF[5][5] == Y && cF[5][7] == Y) {
-			printf("ww\n");
+			if (DEBUG) printf("ww\n");
 			leftInverse(G); downInverse(G); front(G); down(G); left(G); downInverse(G); leftInverse(G); frontInverse(G); left(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[8][4] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[6][5] == Y
 			  && cF[9][3] == Y && cF[5][1] == Y
 			  && cF[5][3] == Y && cF[5][4] == Y) {
-			printf("xx\n");
+			if (DEBUG) printf("xx\n");
 			right(G); down(G); frontInverse(G); downInverse(G); rightInverse(G); down(G); right(G); front(G); rightInverse(G);
 			return;	
 		}
 		else if (cF[8][4] == Y && cF[8][3] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][3] == Y && cF[5][4] == Y && cF[5][6] == Y && cF[5][7] == Y && cF[5][8] == Y) {
-			printf("yy\n");
+			if (DEBUG) printf("yy\n");
 			frontInverse(G); downInverse(G); rightInverse(G); down(G); right(G); front(G);
 			return;	
 		}
 		else if (cF[8][3] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][3] == Y && cF[9][4] == Y && cF[5][4] == Y && cF[5][6] == Y && cF[5][8] == Y) {
-			printf("zz\n");
+			if (DEBUG) printf("zz\n");
 			front(G); left(G); down(G); leftInverse(G); downInverse(G); frontInverse(G);
 			return;	
 		}
 		else if (cF[8][3] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][3] == Y && cF[9][5] == Y && cF[9][4] == Y && cF[5][4] == Y && cF[5][5] == Y) {
-			printf("11\n");
+			if (DEBUG) printf("11\n");
 			left(G); down(G); leftInverse(G); downInverse(G); leftInverse(G); front(G); left(G); frontInverse(G);
 			return;	
 		}
 		else if (cF[8][3] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y
 			  && cF[6][4] == Y && cF[9][4] == Y && cF[5][3] == Y && cF[5][7] == Y && cF[5][8] == Y) {
-			printf("22\n");
+			if (DEBUG) printf("22\n");
 			right(G); down(G); rightInverse(G); down(G); right(G); downInverse(G); rightInverse(G); downInverse(G); rightInverse(G); back(G); right(G); backInverse(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[7][5] == Y && cF[7][4] == Y
 			  && cF[6][4] == Y && cF[6][3] == Y && cF[9][4] == Y && cF[5][0] == Y && cF[5][1] == Y
 			  && cF[5][5] == Y) {
-			printf("33\n");
+			if (DEBUG) printf("33\n");
 			leftInverse(G); downInverse(G); left(G); downInverse(G); leftInverse(G); down(G); left(G); down(G); left(G); backInverse(G); leftInverse(G); back(G);
 			return;	
 		}
 		else if (cF[8][5] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y
 			  && cF[6][3] == Y && cF[9][4] == Y && cF[9][3] == Y
 			  && cF[5][4] == Y && cF[5][6] == Y) {
-			printf("44\n");
+			if (DEBUG) printf("44\n");
 			leftInverse(G); front(G); left(G); down(G); leftInverse(G); downInverse(G); frontInverse(G); down(G); left(G);
 			return;	
 		}
 		else if (cF[8][3] == Y && cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][5] == Y
 			  && cF[9][5] == Y && cF[9][4] == Y && cF[5][2] == Y && cF[5][4] == Y) {
-			printf("55\n");
+			if (DEBUG) printf("55\n");
 			right(G); frontInverse(G); rightInverse(G); downInverse(G); right(G); down(G); front(G); downInverse(G); rightInverse(G);
 			return;	
 		}
-		else {
+		else if (cF[8][3] == Y && cF[8][4] == Y && cF[8][5] == Y &&
+				 cF[7][3] == Y && cF[7][4] == Y && cF[7][5] == Y &&
+				 cF[6][3] == Y && cF[6][4] == Y && cF[6][5] == Y)	{
+			//Last layer is already oriented.
+			return;
 		}
 		down();
 	}
-	printf("FAIL\n");
+	if (DEBUG) printf("FAIL\n");
 }
 
 int inputToFaces(char c) {
@@ -983,6 +1005,7 @@ void shortenSolution() { //TODO: Deal with four of something in a row & inverse 
 				solutionLen -= 2;
 			}
 		}
+		/* //TODO: whatever this is
 		for (i=0; i<solutionLen-1; i++) {
 			if (((isupper(solution[i]) && islower(solution[i+1])) || (islower(solution[i]) && isupper(solution[i+1]))) && (toupper(solution[i]) == toupper(solution[i+1]))) {
 			printf("\n\n\nNo idea if this works because i have never gotten it to trigger.\nMessage From - shortenSolution()\n\n\n");
@@ -998,6 +1021,7 @@ void shortenSolution() { //TODO: Deal with four of something in a row & inverse 
 				}
 			}
 		}
+		*/
 	}
 }
 
@@ -1060,16 +1084,23 @@ void firstTwoLayers() {
  //I lost those things that i wrote... but i remember so... dope
 
 	setUpForF2L(WOG, OG);
-	printf("WOG - ");
+	if (DEBUG) printCube(1);
+	if (DEBUG) printf("WOG - ");
 	doF2LSolution(G, WOG, OG);
+
 	setUpForF2L(WRB, RB); //TODO: I'm getting "Abort Trap: 6" for some reason (writing to memory I dont own???)... idk
-	printf("WRB - ");
+	if (DEBUG) printCube(1);
+	if (DEBUG) printf("WRB - ");
 	doF2LSolution(B, WRB, RB);
+
 	setUpForF2L(WOB, OB);
-	printf("WOB - ");
+	if (DEBUG) printCube(1);
+	if (DEBUG) printf("WOB - ");
 	doF2LSolution(O, WOB, OB);
+
 	setUpForF2L(WRG, RG); //TODO: also got "Abort Trap: 6" ... idk my man, deal with it later i guess
-	printf("WRG - ");
+	if (DEBUG) printCube(1);
+	if (DEBUG) printf("WRG - ");
 	doF2LSolution(R, WRG, RG);
 
 	//TODO
@@ -1224,416 +1255,416 @@ void doF2LSolution(Cubelet face, Cubelet corner, Cubelet edge) {
 	//TODO: remove - testing -- actually, maybe not... could be useful to keep around...
 	//printf("Testing orientation getter-er\nCorner Position: %d\nCorner Orientation: %d\nEdge Position: %d\nEdge Orientation: %d\n", corner_layer, corner_orientation, edge_position, edge_orientation);	
 
+
 	if (corner_layer == 2) {
 		if (corner_orientation == 0) {
 			if (edge_position == 4) {
 				if (edge_orientation == 0) {
-					printf("A");
+					if (DEBUG) printf("A");
 					left(face); down(face); leftInverse(face); downInverse(face);
 					left(face); down(face); leftInverse(face); downInverse(face);
 					left(face); down(face); leftInverse(face);
-				}
+					}
 				else { //TODO: DO A SEARCH AND REPLEACE FOR () - (face)
-					printf("B");
+					if (DEBUG) printf("B");
 					left(face); downInverse(face); leftInverse(face); down(face);
 					frontInverse(face); down(face); front(face);
+					}
 				}
-			}
 			else if (edge_position == 0) {
 				if (edge_orientation == 0) {
-					printf("C");
-					left(face); down(face); leftInverse(face); downInverse(face);
+					if (DEBUG) printf("C");
+					left(face); down(face); leftInverse(face); downInverse(face); 
 					downInverse(face); left(face); down(face); leftInverse(face);
 					downInverse(face); left(face); down(face); leftInverse(face);
-				}
+					}
 				else {
-					printf("D");
+					if (DEBUG) printf("D");
 					frontInverse(face); down(face); down(face); front(face);
 					down(face); frontInverse(face); downInverse(face); front(face);
+					}
 				}
-			}
 			else if (edge_position == 1) {
 				if (edge_orientation == 0) {
-					printf("E");
+					if (DEBUG) printf("E");
 					left(face); down(face); down(face); leftInverse(face);
 					downInverse(face); left(face); down(face); leftInverse(face);
-				}
+					}
 				else {
-					printf("F");
+					if (DEBUG) printf("F");
 					frontInverse(face); downInverse(face); front(face); down(face);
 					down(face); frontInverse(face); downInverse(face); front(face);
 					down(face); frontInverse(face); downInverse(face); front(face);
+					}
 				}
-			}
 			else if (edge_position == 2) {
 				if (edge_orientation == 0) {
-					printf("G");
+					if (DEBUG) printf("G");
 					down(face); left(face); down(face); down(face);
-					leftInverse(face); down(face); left(face); downInverse(face);
-					leftInverse(face);	
-				}
+					leftInverse(face); down(face); left(face);
+					downInverse(face); leftInverse(face);	
+					}
 				else {
-					printf("H");
+					if (DEBUG) printf("H");
 					down(face); down(face); frontInverse(face); downInverse(face);
 					front(face); downInverse(face); frontInverse(face); down(face);
 					front(face);
+					}
 				}
-			}
 			else if (edge_position == 3) { //TODO: this can technically just be an if --- would only make it harder to read
 				if (edge_orientation == 0) {
-					printf("I");
-					down(face); down(face); left(face); down(face);
-					leftInverse(face); down(face); left(face); downInverse(face);
-					leftInverse(face);	
-				}
+					if (DEBUG) printf("I");
+					down(face); down(face); left(face); down(face); leftInverse(face);
+					down(face); left(face); downInverse(face); leftInverse(face);	
+					}
 				else {
-					printf("J");
+					if (DEBUG) printf("J");
 					downInverse(face); frontInverse(face); down(face); down(face);
 					front(face); downInverse(face); frontInverse(face); down(face);
 					front(face);
+					}
 				}
+			if (DEBUG) printf("1\n");
 			}
-			printf("1\n");
-		}
 		else if (corner_orientation == 1) {
 			if (edge_position == 4) {
 				if (edge_orientation == 0) {
-					printf("A");
+					if (DEBUG) printf("A");
 					downInverse(face); left(face); downInverse(face); leftInverse(face);
-					downInverse(face); left(face); down(face); down(face);
-					leftInverse(face);
-				}
+					downInverse(face); left(face); down(face); down(face); leftInverse(face);
+					}
 				else {
-					printf("B");
+					if (DEBUG) printf("B");
 					downInverse(face); left(face); down(face); leftInverse(face);
 					down(face); frontInverse(face); downInverse(face); front(face);
+					}
 				}
-			}
 			else if (edge_position == 0) {
 				if (edge_orientation == 0) {
-					printf("C");
+					if (DEBUG) printf("C");
 					frontInverse(face); down(face); front(face); downInverse(face);
 					downInverse(face); left(face); down(face); leftInverse(face);
-				}
+					}
 				else {
-					printf("D");
+					if (DEBUG) printf("D");
 					down(face); frontInverse(face); down(face); front(face);
-					downInverse(face); frontInverse(face); downInverse(face); front(face);
+					downInverse(face); frontInverse(face); downInverse(face);
+					front(face);
+					}
 				}
-			}
 			else if (edge_position == 1) {
 				if (edge_orientation == 0) {
-					printf("E");
+					if (DEBUG) printf("E");
 					down(face); left(face); downInverse(face); leftInverse(face);
-				}
+					}
 				else {
-					printf("F");
+					if (DEBUG) printf("F");
 					downInverse(face); left(face); down(face); down(face);
 					leftInverse(face); down(face); frontInverse(face); downInverse(face);
 					front(face);
+					}
 				}
-			}
 			else if (edge_position == 2) {
 				if (edge_orientation == 0) {
-					printf("G");
+					if (DEBUG) printf("G");
 					downInverse(face); left(face); down(face); leftInverse(face);
 					downInverse(face); left(face); down(face); down(face);
 					leftInverse(face);
-				}
+					}
 				else {
-					printf("H");
+					if (DEBUG) printf("H");
 					down(face); frontInverse(face); downInverse(face); front(face);
 					downInverse(face); frontInverse(face); downInverse(face); front(face);
+					}
 				}
-			}
 			else if (edge_position == 3) { //TODO: this can technically just be an if --- would only make it harder to read
 				if (edge_orientation == 0) {
-					printf("I");
+					if (DEBUG) printf("I");
 					downInverse(face); left(face); down(face); down(face);
 					leftInverse(face); downInverse(face); left(face); down(face);
 					down(face); leftInverse(face);
-				}
+					}
 				else {
-					printf("J");
+					if (DEBUG) printf("J");
 					frontInverse(face); downInverse(face); front(face);
+					}
 				}
+			if (DEBUG) printf("2\n");
 			}
-			printf("2\n");
-		}
 		else if (corner_orientation == 2) {
 			if (edge_position == 4) {
 				if (edge_orientation == 0) {
-					printf("A");
+					if (DEBUG) printf("A");
 					down(face); frontInverse(face); down(face); front(face);
 					down(face); frontInverse(face); down(face); down(face);
 					front(face);
-				}
+					}
 				else {
-					printf("B");
+					if (DEBUG) printf("B");
 					down(face); frontInverse(face); downInverse(face); front(face);
 					downInverse(face);
 					left(face); down(face); leftInverse(face);
+					}
 				}
-			}
 			else if (edge_position == 0) {
 				if (edge_orientation == 0) {
-					printf("C");
+					if (DEBUG) printf("C");
 					down(face); frontInverse(face); down(face); down(face);
 					front(face); downInverse(face); left(face); down(face);
 					leftInverse(face);
-				}
+					}
 				else {
-					printf("D");
+					if (DEBUG) printf("D");
 					downInverse(face); frontInverse(face); down(face); front(face);
+					}
 				}
-			}
 			else if (edge_position == 1) {
 				if (edge_orientation == 0) {
-					printf("E");
+					if (DEBUG) printf("E");
 					downInverse(face); left(face); downInverse(face); leftInverse(face);
 					down(face); left(face); down(face); leftInverse(face);
-				}
+					}
 				else {
-					printf("F");
+					if (DEBUG) printf("F");
 					left(face); downInverse(face); leftInverse(face); down(face);
 					down(face); frontInverse(face); downInverse(face); front(face);
+					}
 				}
-			}
 			else if (edge_position == 2) {
 				if (edge_orientation == 0) {
-					printf("G");
+					if (DEBUG) printf("G");
 					left(face); down(face); leftInverse(face);
-				}
+					}
 				else {
-					printf("H");
+					if (DEBUG) printf("H");
 					down(face); frontInverse(face); down(face); down(face);
 					front(face); down(face); frontInverse(face); down(face);
 					down(face); front(face);
+					}
 				}
-			}
 			else if (edge_position == 3) { //TODO: this can technically just be an if --- would only make it harder to read
 				if (edge_orientation == 0) {
-					printf("I");
+					if (DEBUG) printf("I");
 					downInverse(face); left(face); down(face); leftInverse(face);
 					down(face); left(face); down(face); leftInverse(face);
-				}
+					}
 				else {
-					printf("J");
+					if (DEBUG) printf("J");
 					down(face); frontInverse(face); downInverse(face); front(face);
 					down(face); frontInverse(face); down(face); down(face);
 					front(face);
+					}
 				}
+			if (DEBUG) printf("3\n");
 			}
-			printf("3\n");
 		}
-	}
 	if (corner_layer == 0) {
 		if (corner_orientation == 0) {
 			if (edge_position == 4) {
 				if (edge_orientation == 0) {
-					printf("A");
+					if (DEBUG) printf("A");
 					//MY WORK HERE IS DONE
-				}
+					}
 				else {
-					printf("B");
+					if (DEBUG) printf("B");
 					left(face); downInverse(face); leftInverse(face); down(face);
 					frontInverse(face); down(face); down(face); front(face);
 					down(face); frontInverse(face); down(face); down(face);
 					front(face);
+					}
 				}
-			}
 			else if (edge_position == 0) {
 				if (edge_orientation == 0) {
-					printf("C");
+					if (DEBUG) printf("C");
 					downInverse(); downInverse(); frontInverse(face); down(face);
 					front(face); down(face); left(face); downInverse(face);
 					leftInverse(face);	
-				}
+					}
 				else {
-					printf("D");
+					if (DEBUG) printf("D");
 					down(face); left(face); downInverse(face); leftInverse(face);
 					downInverse(face); frontInverse(face); down(face); front(face);	
+					}
 				}
-			}
 			else if (edge_position == 1) {
 				if (edge_orientation == 0) {
-					printf("E");
+					if (DEBUG) printf("E");
 					downInverse(face); frontInverse(face); down(face); front(face);
 					down(face); left(face); downInverse(face); leftInverse(face);	
-				}
+					}
 				else {
-					printf("F");
-					left(face); downInverse(face); leftInverse(face); downInverse(face);
-					frontInverse(face); down(face); front(face);	
+					if (DEBUG) printf("F");
+					down(face); down(face); left(face); downInverse(face); leftInverse(face); downInverse(face); frontInverse(face); down(face); front(face);
+					//left(face); downInverse(face); leftInverse(face); downInverse(face);
+					//frontInverse(face); down(face); front(face);	
+					}
 				}
-			}
 			else if (edge_position == 2) {
 				if (edge_orientation == 0) {
-					printf("G");
+					if (DEBUG) printf("G");
 					frontInverse(face); down(face); front(face); down(face);
 					left(face); downInverse(face); leftInverse(face);	
-				}
+					}
 				else {
-					printf("H");
+					if (DEBUG) printf("H");
 					downInverse(face); left(face); downInverse(face); leftInverse(face);
 					downInverse(face); frontInverse(face); down(face); front(face);	
+					}
 				}
-			}
 			else if (edge_position == 3) { //TODO: this can technically just be an if --- would only make it harder to read
 				if (edge_orientation == 0) {
-					printf("I");
+					if (DEBUG) printf("I");
 					down(face); frontInverse(face); down(face); front(face);
 					down(face); left(face); downInverse(face); leftInverse(face);
-				}
+					}
 				else {
-					printf("J");
+					if (DEBUG) printf("J");
 					left(face); downInverse(face); leftInverse(face); downInverse(face);
 					frontInverse(face); down(face); front(face);	
+					}
 				}
+			if (DEBUG) printf("4\n");
 			}
-			printf("4\n");
-		}
 		else if (corner_orientation == 1) {
 			if (edge_position == 4) {
 				if (edge_orientation == 0) {
-					printf("A");
+					if (DEBUG) printf("A");
 					left(face); downInverse(face); leftInverse(face); down(face);
-					frontInverse(face); down(face); down(face); front(face);
-					down(face); frontInverse(face); down(face); down(face);
-					front(face);
-				}
+					left(face); down(face); down(face); leftInverse(face);
+					down(face); left(face); downInverse(face); leftInverse(face);
+					}
 				else {
-					printf("B");
+					if (DEBUG) printf("B");
 					left(face); down(face); leftInverse(face); downInverse(face);
 					left(face); downInverse(face); leftInverse(face); down(face);
 					down(face); frontInverse(face); downInverse(face); front(face);
+					}
 				}
-			}
 			else if (edge_position == 0) {
 				if (edge_orientation == 0) {
-					printf("C");
+					if (DEBUG) printf("C");
 					downInverse(face); left(face); down(face); leftInverse(face);
 					downInverse(face); left(face); down(face); leftInverse(face);
-				}
+					}
 				else {
-					printf("D");
+					if (DEBUG) printf("D");
 					frontInverse(face); down(face); front(face); downInverse(face);
 					frontInverse(face); down(face); front(face);
+					}
 				}
-			}
 			else if (edge_position == 1) {
 				if (edge_orientation == 0) {
-					printf("E");
+					if (DEBUG) printf("E");
 					left(face); down(face); leftInverse(face); downInverse(face);
 					left(face); down(face); leftInverse(face);
-				}
+					}
 				else {
-					printf("F");
+					if (DEBUG) printf("F");
 					down(face);
 					frontInverse(face); down(face); front(face); downInverse(face);
 					frontInverse(face); down(face); front(face);
+					}
 				}
-			}
 			else if (edge_position == 2) {
 				if (edge_orientation == 0) {
-					printf("G");
+					if (DEBUG) printf("G");
 					down(face);
 					left(face); down(face); leftInverse(face); downInverse(face);
 					left(face); down(face); leftInverse(face);
-				}
+					}
 				else {
-					printf("H");
+					if (DEBUG) printf("H");
 					down(face); down(face);
 					frontInverse(face); down(face); front(face); downInverse(face);
 					frontInverse(face); down(face); front(face);
+					}
 				}
-			}
 			else if (edge_position == 3) { //TODO: this can technically just be an if --- would only make it harder to read
 				if (edge_orientation == 0) {
-					printf("I");
+					if (DEBUG) printf("I");
 					down(face); down(face); left(face); down(face);
 					leftInverse(face); downInverse(face); left(face); down(face);
 					leftInverse(face);
-				}
+					}
 				else {
-					printf("J");
+					if (DEBUG) printf("J");
 					downInverse(face); frontInverse(face); down(face); front(face);
 					downInverse(face); frontInverse(face); down(face); front(face);
+					}
 				}
+			if (DEBUG) printf("5\n");
 			}
-			printf("5\n");
-		}
 		else if (corner_orientation == 2) {
 			if (edge_position == 4) {
 				if (edge_orientation == 0) {
-					printf("A");
+					if (DEBUG) printf("A");
 					left(face); downInverse(face); leftInverse(face); downInverse(face);
 					left(face); down(face); leftInverse(face); downInverse(face);
 					left(face); down(face); down(face); leftInverse(face);
-				}
+					}
 				else {
-					printf("B");
+					if (DEBUG) printf("B");
 					left(face); downInverse(face); leftInverse(face); down(face);
 					frontInverse(face); downInverse(face); front(face); downInverse(face);
 					frontInverse(face); downInverse(face); front(face);
+					}
 				}
-			}
 			else if (edge_position == 0) {
 				if (edge_orientation == 0) {
-					printf("C");
+					if (DEBUG) printf("C");
 					downInverse(face);
 					left(face); downInverse(face); leftInverse(face); down(face);
 					left(face); downInverse(face); leftInverse(face);
-				}
+					}
 				else {
-					printf("D");
+					if (DEBUG) printf("D");
 					frontInverse(face); downInverse(face); front(face); down(face);
 					frontInverse(face); downInverse(face); front(face);
+					}
 				}
-			}
 			else if (edge_position == 1) {
 				if (edge_orientation == 0) {
-					printf("E");
+					if (DEBUG) printf("E");
 					left(face); downInverse(face); leftInverse(face); down(face);
 					left(face); downInverse(face); leftInverse(face);
-				}
+					}
 				else {
-					printf("F");
+					if (DEBUG) printf("F");
 					down(face);
 					frontInverse(face); downInverse(face); front(face); down(face); 
 					frontInverse(face); downInverse(face); front(face);
+					}
 				}
-			}
 			else if (edge_position == 2) {
 				if (edge_orientation == 0) {
-					printf("G");
+					if (DEBUG) printf("G");
 					down(face);
 					left(face); downInverse(face); leftInverse(face); down(face);
 					left(face); downInverse(face); leftInverse(face);
-				}
+					}
 				else {
-					printf("H");
+					if (DEBUG) printf("H");
 					down(face); down(face); frontInverse(face); downInverse(face);
 					front(face); down(face); frontInverse(face); downInverse(face);
 					front(face);
+					}
 				}
-			}
 			else if (edge_position == 3) { //TODO: this can technically just be an if --- would only make it harder to read
 				if (edge_orientation == 0) {
-					printf("I");
+					if (DEBUG) printf("I");
 					down(face); down(face); left(face); downInverse(face);
 					leftInverse(face); down(face); left(face); downInverse(face);
 					leftInverse(face);
-				}
+					}
 				else {
-					printf("J");
+					if (DEBUG) printf("J");
 					downInverse(); frontInverse(face); downInverse(face); front(face);
 					down(face); frontInverse(face); downInverse(face); front(face);
+					}
 				}
+			if (DEBUG) printf("6\n");
 			}
-			printf("6\n");
 		}
-	}
 }
 
 void setUpForF2L(Cubelet corner, Cubelet edge) {
@@ -1715,8 +1746,15 @@ void setUpForF2L(Cubelet corner, Cubelet edge) {
 	}
 }
 
-void putEdgeInPosition(int i, int j, int k) { //TODO: make it so that it is not just a bandaid solution of the last edge.. also why does only that one misbehave?
-	if (whiteCrossOrientationCheck(i, j, k)) {
+/*
+ * Moves a cube into its solved position as part of the white cross step
+ * Assumes that the cube at location (i, j, k) is a valid cube to solve for white cross
+ * Used in white cross
+ *
+ * int i, j, k : Assumes a valid cube on the correct face to solve for white cross
+ */
+void putEdgeInPosition(int i, int j, int k) {
+	if (whiteCrossOrientationCheck(i, j, k)) { //If the cube is already oriented correctly, simply rotates it into its solved position
 		if (i == 0) { back(G); back(G); }
 		else if (i == 2) { front(G); front(G); }
 		else {
@@ -1724,7 +1762,7 @@ void putEdgeInPosition(int i, int j, int k) { //TODO: make it so that it is not 
 			else { right(G); right(G); }
 		}
 	}
-	else {
+	else { //Cube is not oriented correctly, fixes its orientation and puts in into its solved position
 		if (i == 0) { down(G); left(G); backInverse(G); leftInverse(G); }
 		else if (i == 2) { down(G); right(G); frontInverse(G); rightInverse(G); }
 		else {
@@ -1733,10 +1771,18 @@ void putEdgeInPosition(int i, int j, int k) { //TODO: make it so that it is not 
 		}
 	}
 }
+
+/*
+ * Checks whether the cube at (i, j, k) is oriented correctly or not
+ * int i, j, k : Assumes the input is a valid edge cube on the bottom (yellow) face
+ *
+ * Used in white cross [more specifically putEdgeInPosition()]
+ */
 int whiteCrossOrientationCheck(int i, int j, int k) {
-	if (j != 2) {
-		return -1;
-	}
+	// Unused Error Trapping
+	//if (j != 2) {
+	//	return -1;
+	//}
 
 	if (i == 0) return cF[9][4] == cF[10][4];
 	else if (i == 2) return cF[4][4] == cF[5][4];
@@ -1745,21 +1791,34 @@ int whiteCrossOrientationCheck(int i, int j, int k) {
 		else return cF[4][7] == cF[5][7];
 	}
 }
-void moveEdgeToColumn(Cubelet column, int i, int j, int k) { //Moves the cube at index (i, j, k) to the same-colored face of the cube
+
+/*
+ * Rotates the bottom layer until 'column' matches the cube at location i, j, k
+ *
+ * column : cubelet face to check the cube at (i, j, k) against [Assumes valid values for all inputs]
+ */
+void moveEdgeToColumn(Cubelet column, int i, int j, int k) {
 	Cubelet search = cP[i][j][k];
 	while (column != cP[i][j-1][k]) {
 		down(G);
-		findCube(search, &i, &j, &k);
+		findCube(search, &i, &j, &k); //TODO: Inefficient
 	}
 }
+
+/*
+ * Moves an edge piece to the bottom (yellow) layer if not already in the bottom layer
+ * Used in solving the white cross
+ *
+ * int i, j, k : location of cube to be moved to the bottom layer [Assumes that the location given is a valid edge]
+ */
 void moveEdgeToBottom(int i, int j, int k) { //Moves the cube at index (i, j, k) to the yellow face - This method assumes it is recieving a valid edge position on the white face
 	if (i == 0) {
 		if (j == 0) {
 			back(G);
 			back(G);
 		}
-		else if (j == 1) {
-			if (k == 0) { //TODO: what about the order of the solution makes it so that only the last one (back/blue) is removed from its place?
+		else if (j == 1) { //There is a possibility that the cube on the top layer is already in place, so this makes sure to not move that cube
+			if (k == 0) {
 				back(G);
 				down(G);
 				backInverse(G);
@@ -1771,8 +1830,8 @@ void moveEdgeToBottom(int i, int j, int k) { //Moves the cube at index (i, j, k)
 			}
 		}
 	}
-	else if (i == 1) {
-		if (j == 0) {
+	else if (i == 1) { //The cube must be the one on the top layer, so it is safe to simply move it to the bottom layer
+		if (j == 0) { //This check ensure that the cube is not already on the bottom layer
 			if (k == 0) {
 				left(G);
 				left(G);
@@ -1788,17 +1847,25 @@ void moveEdgeToBottom(int i, int j, int k) { //Moves the cube at index (i, j, k)
 			front(G);
 			front(G);
 		}
-		else if(j == 1) {
+		else if(j == 1) { //There is a possibility that the cube on the top layer is already in place, so this makes sure to not move that cube
 			if (k == 0) {
 				frontInverse(G);
+				down(G);
+				front(G);
 			}
 			else {
 				front(G);
+				down(G);
+				frontInverse(G);
 			}
 		}
 	}
 }
-void findCube(Cubelet search, int* i, int* j, int* k) { //Finds location of Cubelet search in cP and sets, i, j, k to the index
+
+/*
+ * Finds the cubelet 'search' in the cube representation (cP) and sets i, j, k to the location
+ */
+void findCube(Cubelet search, int* i, int* j, int* k) {
 	for(*i=0; *i<3; (*i)++) {
 		for(*j=0; *j<3; (*j)++) {
 			for(*k=0; *k<3; (*k)++) {
@@ -1808,38 +1875,52 @@ void findCube(Cubelet search, int* i, int* j, int* k) { //Finds location of Cube
 	}
 }
 
-void printCube(int which) {
+/*
+ * Prints a 2D visual representation of the cube's state
+ * mode == 0 - print faces : mode == 1 - print cubes : mode == 2 - print both
+ */
+void printCube(int mode) {
+	int i, j, k;
 	char* enumStrings[27] = { //Strings to print (this array is parrallel with the Cubelet enum)
 		"WRB", "WRG", "WOG", "WOB", "WR", "WO", "WB", "WG",
 		"YRB", "YRG", "YOG", "YOB", "YR", "YO", "YB", "WG",
 		"RB", "RG", "OG", "OB", "W", "Y", "O", "R", "G", "B", " " };
 
-	printf("\n        ---------\n"); //Print Faces
-	int i, j, k;
-	for (i=0; i<12; i++) {
-		if (i>2 && i<6) printf("| ");
-		else printf("  ");
-		for (j=0; j<9; j++) {
-			if (j==3 || j==6) printf("| ");
-			printf("%s ", enumStrings[ cF[i][j] ]);
-		}
-		if (i>2 && i<6) printf("|");
-		if (i>1 && i<6) printf("\n-------------------------\n");
-		else printf("\n        ---------\n");
-	}
-	printf("\n");
-
-	for (i=0; i<3; i++) { //Print Cubes
-		for (j=0; j<3; j++) {
-			for (k=0; k<3; k++) {
-				printf("%3s ", enumStrings[ cP[i][j][k] ]);
+	if (mode == 0 || mode == 2) {
+		printf("\n        ---------\n"); //Print Faces
+		for (i=0; i<12; i++) {
+			if (i>2 && i<6) printf("| ");
+			else printf("  ");
+			for (j=0; j<9; j++) {
+				if (j==3 || j==6) printf("| ");
+				printf("%s ", enumStrings[ cF[i][j] ]);
 			}
-			printf("\n");
+			if (i>2 && i<6) printf("|");
+			if (i>1 && i<6) printf("\n-------------------------\n");
+			else printf("\n        ---------\n");
 		}
 		printf("\n");
 	}
+	
+	if (mode == 1 || mode == 2) {
+		for (i=0; i<3; i++) { //Print Cubes
+			for (j=0; j<3; j++) {
+				for (k=0; k<3; k++) {
+					printf("%3s ", enumStrings[ cP[i][j][k] ]);
+				}
+				printf("\n");
+			}
+			printf("\n");
+		}
+	}
 }
 
+/*
+ * Rotates the green face of the cube one quarter rotation clockwise
+ * Appends notation for a clockwise face turn onto the solution string and increments the length
+ * 
+ * f : if the relative front of the cube is not green, will call the corrosponding cube face
+ */
 void front(Cubelet f) {
 	if (f == R) { right(G); return; }
 	if (f == B) { back(G); return; }
@@ -1857,6 +1938,13 @@ void front(Cubelet f) {
 	tmp = cF[2][4]; cF[2][4] = cF[4][2]; cF[4][2] = cF[6][4]; cF[6][4] = cF[4][6]; cF[4][6] = tmp; //Front Edge Edges
 	tmp = cF[2][5]; cF[2][5] = cF[3][2]; cF[3][2] = cF[6][3]; cF[6][3] = cF[5][6]; cF[5][6] = tmp; //Front Edge Corners Part 2 TODO 
 }
+
+/*
+ * Rotates the blue face of the cube one quarter rotation clockwise
+ * Appends notation for a clockwise face turn onto the solution string and increments the length
+ * 
+ * f : if the relative front of the cube is not green, will call the corrosponding cube face
+ */
 void back(Cubelet f) {
 	if (f == R) { left(G); return; }
 	if (f == B) { front(G); return; }
@@ -1874,6 +1962,11 @@ void back(Cubelet f) {
 	tmp = cF[8][4]; cF[8][4] = cF[4][0]; cF[4][0] = cF[0][4]; cF[0][4] = cF[4][8]; cF[4][8] = tmp; //Back Edge Edges
 	tmp = cF[8][3]; cF[8][3] = cF[3][0]; cF[3][0] = cF[0][5]; cF[0][5] = cF[5][8]; cF[5][8] = tmp; //Back Edge Corners Part 2 TODO
 }
+
+/*
+ * Rotates the yellow face of the cube one quarter rotation clockwise
+ * Appends notation for a clockwise face turn onto the solution string and increments the length
+ */
 void down(){
 	strcat(solution, "D");
 	solutionLen++;
@@ -1887,6 +1980,11 @@ void down(){
 	tmp = cF[5][7]; cF[5][7] = cF[5][4]; cF[5][4] = cF[5][1]; cF[5][1] = cF[9][4]; cF[9][4] = tmp; //Down Edge Edges
 	tmp = cF[5][6]; cF[5][6] = cF[5][3]; cF[5][3] = cF[5][0]; cF[5][0] = cF[9][5]; cF[9][5] = tmp; //Down Edge Corners Part 2 TODO
 }
+
+/*
+ * Rotates the white face of the cube one quarter rotation clockwise
+ * Appends notation for a clockwise face turn onto the solution string and increments the length
+ */
 void up() {	
 	strcat(solution, "U");
 	solutionLen++;
@@ -1902,6 +2000,13 @@ void up() {
 	tmp = cF[3][1]; cF[3][1] = cF[3][4]; cF[3][4] = cF[3][7]; cF[3][7] = cF[11][4]; cF[11][4] = tmp; //Up Edge Edges
 	tmp = cF[3][2]; cF[3][2] = cF[3][5]; cF[3][5] = cF[3][8]; cF[3][8] = cF[11][3]; cF[11][3] = tmp; //Up Edge Corners Part 2 TODO: Name this better (and the simmilar ones also)
 }
+
+/*
+ * Rotates the red face of the cube one quarter rotation clockwise
+ * Appends notation for a clockwise face turn onto the solution string and increments the length
+ * 
+ * f : if the relative front of the cube is not green, will call the corrosponding cube face
+ */
 void right(Cubelet f) {
 	if (f == R) { back(G); return; }
 	if (f == B) { left(G); return; }
@@ -1919,6 +2024,13 @@ void right(Cubelet f) {
 	tmp = cF[1][5]; cF[1][5] = cF[4][5]; cF[4][5] = cF[7][5]; cF[7][5] = cF[10][5]; cF[10][5] = tmp; //Right Edge Edges
 	tmp = cF[2][5]; cF[2][5] = cF[5][5]; cF[5][5] = cF[8][5]; cF[8][5] = cF[11][5]; cF[11][5] = tmp; //Right Edge Corners Part 2 TODO
 }
+
+/*
+ * Rotates the orange face of the cube one quarter rotation clockwise
+ * Appends notation for a clockwise face turn onto the solution string and increments the length
+ * 
+ * f : if the relative front of the cube is not green, will call the corrosponding cube face
+ */
 void left(Cubelet f) {
 	if (f == R) { front(G); return; }
 	if (f == B) { right(G); return; }
@@ -1936,21 +2048,57 @@ void left(Cubelet f) {
 	tmp = cF[10][3]; cF[10][3] = cF[7][3]; cF[7][3] = cF[4][3]; cF[4][3] = cF[1][3];  cF[1][3] = tmp; //Left Edge Edges
 	tmp = cF[11][3]; cF[11][3] = cF[8][3]; cF[8][3] = cF[5][3]; cF[5][3] = cF[2][3];  cF[2][3] = tmp; //Left Edge Corners Part 2 TODO
 }
+
+/*
+ * Simulates a quarter turn of the green face counter-clockwise by calling three clockwise turns of the green face
+ *
+ * f : if the relative front of the cube is not green, will call the corrosponding cube face
+ */
 void frontInverse(Cubelet f) {
 	front(f); front(f); front(f);
 }
+
+/*
+ * Simulates a quarter turn of the blue face counter-clockwise by calling three clockwise turns of the blue face
+ *
+ * f : if the relative front of the cube is not green, will call the corrosponding cube face
+ */
 void backInverse(Cubelet f) {
 	back(f); back(f); back(f);
 }
+
+/*
+ * Simulates a quarter turn of the yellow face counter-clockwise by calling three clockwise turns of the yellow face
+ *
+ * f : if the relative front of the cube is not green, will call the corrosponding cube face
+ */
 void downInverse() {
 	down(); down(); down(); 
 }
+
+/*
+ * Simulates a quarter turn of the white face counter-clockwise by calling three clockwise turns of the white face
+ *
+ * f : if the relative front of the cube is not green, will call the corrosponding cube face
+ */
 void upInverse() {
 	up(); up(); up();	
 }
+
+/*
+ * Simulates a quarter turn of the red face counter-clockwise by calling three clockwise turns of the red face
+ *
+ * f : if the relative front of the cube is not green, will call the corrosponding cube face
+ */
 void rightInverse(Cubelet f) {
 	right(f); right(f); right(f);
 }
+
+/*
+ * Simulates a quarter turn of the orange face counter-clockwise by calling three clockwise turns of the orange face
+ *
+ * f : if the relative front of the cube is not green, will call the corrosponding cube face
+ */
 void leftInverse(Cubelet f) {
 	left(f); left(f); left(f);
 }
