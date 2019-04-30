@@ -7,7 +7,7 @@
 #include <errno.h>
 #include <fcntl.h>
 
-#define DEBUG 1
+#define DEBUG 0
 #define PRINT_MODE 0
 typedef enum Cubelet Cubelet;
 enum Cubelet {  WRB, WRG, WOG, WOB, WR, WO, WB, WG, //TODO does this compile to like - enum enum Cubelet { ... ???
@@ -170,13 +170,18 @@ void randomizeCube() {
 		strcpy(solution, "");
 		solutionLen = 0;
 }
+
 int main(int argc, char* argv[]) {
-	//Do Stuff
+	if (argc != 3) {
+		printf("Input Format: [Arduino Device Name (Or '0' for none)] [Cube State (ex. RROBWRG...GB) (Or '0' for randomize)]\n");
+		return 1;
+	}
+
 	if (1==1) {
 		do {
-			randomizeCube();
-	
-			//cubeInput(argv[1]);
+			if (strcmp(argv[2], "0")) cubeInput(argv[2]);
+			else { randomizeCube(); }
+
 			whiteCross();
 			if (DEBUG) printCube(PRINT_MODE);
 			firstTwoLayers();
@@ -187,7 +192,7 @@ int main(int argc, char* argv[]) {
 			if (DEBUG) printCube(PRINT_MODE);
 			rotateLastLayer();
 			shortenSolution();
-			if (!DEBUG) printCube(PRINT_MODE);
+			if (DEBUG) printCube(PRINT_MODE);
 		
 			if (checkSolved()) {
 				printf("SOLVED - SOLVED - SOLVED\n");
@@ -197,7 +202,7 @@ int main(int argc, char* argv[]) {
 				return 1;
 			}
 		
-			//printf("%s\n", solution);
+			printf("%s\n", solution);
 			//printf("%d\n", solutionLen);
 			if (DEBUG) printf("\n-----------------------------------------------------\n\n");
 			if (DEBUG) {
@@ -206,21 +211,25 @@ int main(int argc, char* argv[]) {
     		}
 		} while (DEBUG);
 	}
+
 	//Do Serial Port Stuff
-	if (1==2) {
-		char* devicePort = "/dev/cu.usbmodem14301";
-		int fd = open(devicePort, O_RDWR | O_NOCTTY | O_SYNC);
+	if (strcmp(argv[1], "0")) {
+		//char* devicePort = "/dev/cu.usbmodem14301";
+		int fd = open(argv[1], O_RDWR | O_NOCTTY | O_SYNC);
 		if (fd < 0) {
-			printf("\nerror %d opening %s: %s\n", errno, devicePort, strerror(errno));
+			printf("\nerror %d opening %s: %s\n", errno, argv[1], strerror(errno));
 			return 1;
 		}
 		setSerialPort(fd, B9600);
 
-		if (useUp) { printf("PUT THE TOP ON\n"); }
-		unsigned int retTime = time(0) + 3 + (useUp * 45); //45 seconds to put the top on if needed
+		if (useUp) { printf("PUT THE TOP ON\n"); } //45 seconds to put the top on if needed
+		unsigned int retTime = time(0) + 3 + (useUp * 45);
     	while (time(0) < retTime);
 
-    	//strcat(solution, "Z");
+
+		//Limit the write to 64 bytes each time because the arduino's serial buffer is that size
+		//The following assumes that a solution does not exceed 126 moves, that should be a safe assumption
+		//TODO: add code so that it waits for a done signal before sending the second half(and starting [done above])
     	char send[128];
 
     	strncpy(send, solution, 63);
@@ -238,7 +247,7 @@ int main(int argc, char* argv[]) {
     	write(fd, "Z", 1);
     	while (read(fd, terminateString, 16) == 0) {}
 
-    	printf("END PROGRAM\n");
+    	//printf("END PROGRAM\n");
 	}
 	return 0;
 }
