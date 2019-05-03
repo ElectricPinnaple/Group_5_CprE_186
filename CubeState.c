@@ -7,7 +7,7 @@
 #include <errno.h>
 #include <fcntl.h>
 
-#define DEBUG 0
+#define DEBUG 1
 #define PRINT_MODE 0
 typedef enum Cubelet Cubelet;
 enum Cubelet {  WRB, WRG, WOG, WOB, WR, WO, WB, WG, //TODO does this compile to like - enum enum Cubelet { ... ???
@@ -165,10 +165,14 @@ void randomizeCube() {
 					break;
 			}
 		} //Randomize Cube State
-		//strcat(solution, " | ");
-		//solutionLen+=3;
-		strcpy(solution, "");
-		solutionLen = 0;
+		if (DEBUG) {
+			strcat(solution, " | ");
+			solutionLen+=3;
+		}
+		else {
+			strcpy(solution, "");
+			solutionLen = 0;
+		}
 }
 
 int main(int argc, char* argv[]) {
@@ -192,8 +196,9 @@ int main(int argc, char* argv[]) {
 			if (DEBUG) printCube(PRINT_MODE);
 			rotateLastLayer();
 			shortenSolution();
-			if (DEBUG) printCube(PRINT_MODE);
+			if (!DEBUG) printCube(PRINT_MODE);
 		
+			printf("%s\n", solution);
 			if (checkSolved()) {
 				printf("SOLVED - SOLVED - SOLVED\n");
 			}
@@ -202,10 +207,12 @@ int main(int argc, char* argv[]) {
 				return 1;
 			}
 		
-			printf("%s\n", solution);
+			//printf("%s\n", solution);
 			//printf("%d\n", solutionLen);
 			if (DEBUG) printf("\n-----------------------------------------------------\n\n");
 			if (DEBUG) {
+				strcpy(solution, "");
+				solutionLen = 0;
 				unsigned int retTime = time(0) + 1;
     			while (time(0) < retTime);
     		}
@@ -222,8 +229,8 @@ int main(int argc, char* argv[]) {
 		}
 		setSerialPort(fd, B9600);
 
-		if (useUp) { printf("PUT THE TOP ON\n"); } //45 seconds to put the top on if needed
-		unsigned int retTime = time(0) + 3 + (useUp * 45);
+		//if (useUp) { printf("PUT THE TOP ON\n"); } //45 seconds to put the top on if needed
+		unsigned int retTime = time(0) + 3;// + (useUp * 45);
     	while (time(0) < retTime);
 
 
@@ -238,14 +245,21 @@ int main(int argc, char* argv[]) {
     	write(fd, "Z", 1);
 
     	char terminateString[16] = {0};
-    	while (read(fd, terminateString, 16) == 0) {}
-    	read(fd, terminateString, 16);
+    	while (read(fd, terminateString, 4) == 0) {}
+    	//printf("TerminateString #1 - %s\n", terminateString);
+    	//read(fd, terminateString, 4);
 
     	strcpy(send, &solution[63]);
 		printf("%s\n", send);
     	write(fd, send, strlen(send));
     	write(fd, "Z", 1);
-    	while (read(fd, terminateString, 16) == 0) {}
+    	//while (read(fd, terminateString, 16) == 0) {}
+    	int warning;
+    	do {
+    		warning = read(fd, terminateString, 4);
+    		//if (warning != 0) { printf("WARNING - Read failed [Main Method]\n"); } //TODO: make this not dumb
+    	} while(strcmp(terminateString, "DONE"));
+    	//printf("TerminateString #2 - %s\n", terminateString);
 
     	//printf("END PROGRAM\n");
 	}
@@ -602,16 +616,17 @@ void orientLastLayer() {
 			front(G); leftInverse(G); frontInverse(G); left(G); down(G); left(G); downInverse(G); leftInverse(G);
 			return;	
 		}
-		else if (cF[8][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[6][4] == Y && cF[5][2] == Y && cF[5][5] == Y
-			  && cF[5][7] == Y && cF[9][3] == Y && cF[9][4] == Y) {
-			if (DEBUG) printf("XX\n"); //TODO: FIX
+		else if (cF[5][1] == Y && cF[5][4] == Y && cF[5][5] == Y
+			  && cF[5][8] == Y && cF[6][3] == Y && cF[7][4] == Y
+			  && cF[7][5] == Y && cF[8][4] == Y && cF[9][3] == Y) {
+			if (DEBUG) printf("XX\n");
 			leftInverse(G); downInverse(G); left(G); front(G); leftInverse(G); frontInverse(G); down(G); front(G); left(G); frontInverse(G);
 			return;	
 		}
-		else if (cF[8][5] == Y && cF[8][3] == Y && cF[7][4] == Y && cF[7][3] == Y
-			  && cF[6][4] == Y && cF[9][4] == Y && cF[5][5] == Y && cF[5][3] == Y
-			  && cF[5][7] == Y) {
-			if (DEBUG) printf("YY\n"); //TODO: FIX
+		else if (cF[5][1] == Y && cF[5][4] == Y && cF[6][3] == Y
+			  && cF[6][5] == Y && cF[7][4] == Y && cF[7][5] == Y
+			  && cF[8][4] == Y && cF[9][3] == Y && cF[9][5] == Y) {
+			if (DEBUG) printf("YY\n");
 			downInverse(G); left(G); down(G); down(G); leftInverse(G); downInverse(G); left(G); downInverse(G); left(G); left(G); frontInverse(G); downInverse(G); front(G); down(G); left(G);
 			return;	
 		}
@@ -756,10 +771,10 @@ void orientLastLayer() {
 			rightInverse(G); backInverse(G); right(G); leftInverse(G); downInverse(G); left(G); down(G); rightInverse(G); back(G); right(G);
 			return;	
 		}
-		else if (cF[7][5] == Y && cF[7][4] == Y && cF[7][3] == Y && cF[8][3] == Y
-			  && cF[9][4] == Y && cF[5][5] == Y
-			  && cF[5][2] == Y && cF[5][4] == Y && cF[5][8] == Y) {
-			if (DEBUG) printf("uu\n"); //TODO: FIX
+		else if (cF[5][2] == Y && cF[5][4] == Y && cF[5][8] == Y
+			  && cF[6][5] == Y && cF[7][3] == Y && cF[7][4] == Y
+			  && cF[7][5] == Y && cF[9][3] == Y && cF[9][4] == Y) {
+			if (DEBUG) printf("uu\n");
 			left(G); back(G); leftInverse(G); right(G); down(G); rightInverse(G); downInverse(G); left(G); backInverse(G); leftInverse(G);
 			return;	
 		}
@@ -1093,22 +1108,22 @@ void firstTwoLayers() {
  //I lost those things that i wrote... but i remember so... dope
 
 	setUpForF2L(WOG, OG);
-	if (DEBUG) printCube(1);
+	if (DEBUG) printCube(PRINT_MODE);
 	if (DEBUG) printf("WOG - ");
 	doF2LSolution(G, WOG, OG);
 
 	setUpForF2L(WRB, RB); //TODO: I'm getting "Abort Trap: 6" for some reason (writing to memory I dont own???)... idk
-	if (DEBUG) printCube(1);
+	if (DEBUG) printCube(PRINT_MODE);
 	if (DEBUG) printf("WRB - ");
 	doF2LSolution(B, WRB, RB);
 
 	setUpForF2L(WOB, OB);
-	if (DEBUG) printCube(1);
+	if (DEBUG) printCube(PRINT_MODE);
 	if (DEBUG) printf("WOB - ");
 	doF2LSolution(O, WOB, OB);
 
 	setUpForF2L(WRG, RG); //TODO: also got "Abort Trap: 6" ... idk my man, deal with it later i guess
-	if (DEBUG) printCube(1);
+	if (DEBUG) printCube(PRINT_MODE);
 	if (DEBUG) printf("WRG - ");
 	doF2LSolution(R, WRG, RG);
 
